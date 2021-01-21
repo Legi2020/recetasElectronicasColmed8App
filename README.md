@@ -1,2 +1,1 @@
-# aplicacionEstable
 # aplicacionColmed8
