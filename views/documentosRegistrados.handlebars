@@ -1,0 +1,38 @@
+<h2 class="text-center m-3 text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
+<div class="row">
+    <div class="col table-responsive">
+        <table class="table table-bordered table-hover  tabla-registrados">
+            <thead class="table-dark table-sm text-center">
+                <tr>
+                    <th>Hash Documento</th>
+                    <th>Fecha Registro</th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody class="table-hover">
+                {{#if documentos}}
+                {{#each documentos}}
+                <tr>
+                    <td>{{dataValues.hash}}</td>
+                    <td>{{#mostrarFechaAgo dataValues.fecha}}{{dataValues.fecha}}
+                        {{/mostrarFechaAgo}}
+                    </td>
+                    <td><a class="link-ver" href='/comprobar/{{dataValues.hash}}' target="_blank"><svg
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                    d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
+                            </svg></td>
+                </tr>
+                {{/each}}
+                {{else}}
+                <tr>
+                    <td>No tienes documentos registrados aún.</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {{/if}}
+            </tbody>
+        </table>
+    </div>
+</div>

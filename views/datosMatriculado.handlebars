@@ -1,0 +1,26 @@
+{{>mostrarAlertas}}
+<div class="row mt-1 d-flex justify-content-center">
+    <div class="col-md-5 container-signin">
+        <div class="card text-center" id="registrar-matricula">
+            <div class="card-header">
+                <h3 class="text-uppercase">Datos del matriculado</h3>
+            </div>
+            <div class="card-body">
+                <form action="/">
+                    <div class="form-group text-left">
+                        <span class="text-uppercase"><strong>Número de matrícula: </strong>{{matricula}}</span>
+                    </div>
+                    <div class="form-group text-left">
+                        <span class="text-uppercase"><strong>Nombre del matriculado:</strong> </strong>{{nombre}}</span>
+                    </div>
+                    <div class="form-group text-left">
+                        <span><strong>EMAIL:</strong> </strong>{{email}}</span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-secondary d-inline-inline-block" value="VOLVER">
+                        </input>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
