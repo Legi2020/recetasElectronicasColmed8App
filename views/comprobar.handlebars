@@ -1,46 +1,37 @@
-<h2 class="text-center m-3 text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
+<h2 class="text-center text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
 {{>mostrarAlertas}}
-<div class="row text-center  justify-content-center h-100 cuadro-fila">
+<div class="row text-center  justify-content-center h-100 cuadro-fila centrar">
   <div class="col-sm-6 columnas columna-registro">
-    <h2 class="text-uppercase font-weight-bold texto-div">Compruebe un documento</h2>
+   {{!--  <h2 class="text-uppercase font-weight-bold texto-div">Compruebe un documento</h2> --}}
     <form action="/comprobar" class="dropFileForm" id="comprobarForm" enctype="multipart/form-data" method="POST">
       <input type="file" name="imagen" id="fileInput" multiple onchange="addFiles(event)">
       <label type="file" for="fileInput" id="fileLabel" ondragover="overrideDefault(event);fileHover();"
         ondragenter="overrideDefault(event);fileHover();" ondragleave="overrideDefault(event);fileHoverEnd();" ondrop="overrideDefault(event);fileHoverEnd();
                       addFiles(event);filePreview()">
-        <span id="fileLabelText">Seleccione o arrastre un documento aquí</span>
+        <span id="fileLabelText"><strong>1.</strong> Oprima aquí o arrastre el documento</span>
         <br>
-        <span><i class="fa fa-download fa-5x mb-4">
-            <div class="sk-circle oculto">
-              <div class="sk-circle1 sk-child"></div>
-              <div class="sk-circle2 sk-child"></div>
-              <div class="sk-circle3 sk-child"></div>
-              <div class="sk-circle4 sk-child"></div>
-              <div class="sk-circle5 sk-child"></div>
-              <div class="sk-circle6 sk-child"></div>
-              <div class="sk-circle7 sk-child"></div>
-              <div class="sk-circle8 sk-child"></div>
-              <div class="sk-circle9 sk-child"></div>
-              <div class="sk-circle10 sk-child"></div>
-              <div class="sk-circle11 sk-child"></div>
-              <div class="sk-circle12 sk-child"></div>
-            </div>
+        <span>
+          <i class="fa fa-file-alt fa-5x mb-4"></i>
+          <div class="sk-circle oculto">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+          </div>
           </i>
 
         </span>
       </label>
       <input type="submit" name="enviarBtn" id="sendHashButton" class="btn btn-secondary d-inline-inline-block btn-rc"
-        value="COMPROBAR"></input>
+        value="2. COMPROBAR"></input>
     </form>
-  </div>
-  <div class="col-sm-6 instrucciones">
-    <h2 class="text-white text-uppercase">Instrucciones de uso:</h2>
-    <p class="text-white text-justify">1 - Seleccione el documento que quiere comprobar (.png, .jpg, .pdf, .docx, .xlsx)
-      y presione
-      "Seleccione o arrastre un documento aquí".</p>
-    <p class="text-white text-justify">2 - Presione "COMPROBAR".</p>
-    <p class="text-white text-justify">3 - En caso de que dicho documento ya se encuentre registrado y no haya sido
-      modificado, podrá
-      visualizar los datos del mismo, imprimir o descargar en formato PDF.</p>
   </div>
 </div>

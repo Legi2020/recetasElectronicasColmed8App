@@ -1,48 +1,36 @@
-<h2 class="text-center m-3 text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
+<h2 class="text-center text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
 {{>mostrarAlertas}}
-<div class="row text-center  justify-content-center h-100 cuadro-fila">
-  <div class="col-sm-6 columnas columna-registro">
-    <h2 class="text-uppercase font-weight-bold texto-div">Registre un documento</h2>
+<div class="row text-center justify-content-center h-100 cuadro-fila">
+  <div class="col-sm-6 columnas columna-registro centrar">
+   {{!--  <h2 class="text-uppercase font-weight-bold texto-div">Registre un documento</h2> --}}
     <form action="/registrar" class="dropFileForm" id="registrarForm" enctype="multipart/form-data" method="POST">
       <input type="file" name="imagen" id="fileInput" multiple onchange="addFiles(event)">
       <label type="file" for="fileInput" id="fileLabel" ondragover="overrideDefault(event);fileHover();"
         ondragenter="overrideDefault(event);fileHover();" ondragleave="overrideDefault(event);fileHoverEnd();" ondrop="overrideDefault(event);fileHoverEnd();
                       addFiles(event);filePreview()">
-        <span id="fileLabelText">Seleccione o arrastre un documento aquí</span>
+        <span id="fileLabelText"><strong>1.</strong> Oprima aquí o arrastre el documento</span>
         <br>
-        <span><i class="fa fa-download fa-5x mb-4">
-            <div class="sk-circle oculto">
-              <div class="sk-circle1 sk-child"></div>
-              <div class="sk-circle2 sk-child"></div>
-              <div class="sk-circle3 sk-child"></div>
-              <div class="sk-circle4 sk-child"></div>
-              <div class="sk-circle5 sk-child"></div>
-              <div class="sk-circle6 sk-child"></div>
-              <div class="sk-circle7 sk-child"></div>
-              <div class="sk-circle8 sk-child"></div>
-              <div class="sk-circle9 sk-child"></div>
-              <div class="sk-circle10 sk-child"></div>
-              <div class="sk-circle11 sk-child"></div>
-              <div class="sk-circle12 sk-child"></div>
-            </div>
+        <span>
+          <i class="fa fa-file-alt fa-5x mb-4"></i>
+          <div class="sk-circle oculto">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+          </div>
           </i>
         </span>
       </label>
       <input type="submit" name="enviarBtn" id="sendHashButton" class="btn btn-secondary d-inline-inline-block btn-rc"
-        value="REGISTRAR"></input>
+        value="2. REGISTRAR"></input>
     </form>
-  </div>
-  <div class="col-sm-6 instrucciones">
-    <h2 class="text-white text-uppercase">Instrucciones de uso:</h2>
-    <p class="text-white text-justify">1 - Genere su documento (.png, .jpg, .pdf, .docx, .xlsx).</p>
-    <p class="text-white text-justify">2 - Presione "Arrastre o seleccione un documento aquí".</p>
-    <p class="text-white text-justify">3 - Seleccione el documento que generó previamente.</p>
-    <p class="text-white text-justify">4 - Presione "REGISTRAR".</p>
-    <p class="text-white text-justify">5 - Aguarde mientras se registra el documento, <strong>este proceso puede demorar
-        hasta 15 segundos</strong>.</p>
-    <p class="text-white text-justify">6 - Podrá visualizar los datos del registro, imprimir o descargar en formato PDF.
-    </p>
-    <p class="text-white text-justify">7 - El registro contiene un código QR con el cual podrá verificar el documento
-      accediendo desde un lector QR.</p>
   </div>
 </div>

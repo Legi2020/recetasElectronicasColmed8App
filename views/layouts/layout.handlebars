@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/css/estilos.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
   <link rel="icon" href="/images/favicon.ico" type="image/png" />
-  <title>{{nombrePagina}} - Legitime</title>
+  <title>{{#if nombrePagina}}{{nombrePagina}} - {{/if}}Legitime</title>
 </head>
 <nav class="navbar navbar-expand-lg navbar-light bg-light p-2">
   <a class="navbar-brand" href="/"><img src="/images/logo.png" alt="" style="width: 200px;"></a>
@@ -37,11 +37,16 @@
       <li>
         <a class="nav-link" href="/comprobar">Comprobar</a>
       </li>
-      <li>
-        <a class="nav-link" href="/documento/registrados">Documentos registrados</a>
-      </li>
-      <li>
-        <a class="nav-link" href="/datos-matriculado">Datos del matriculado</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarBuscar" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Información
+        </a>
+        <div class="dropdown-menu text-center" aria-labelledby="navbarBuscar">
+          <a class="nav-link" href="/documento/registrados">Documentos registrados</a>
+          <a class="nav-link" href="/datos-matriculado">Datos del matriculado</a>
+          <a class="nav-link" href="/instrucciones">Instrucciones de uso</a>
+        </div>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/cerrar-sesion">Cerrar sesión</a>
@@ -62,7 +67,7 @@
         <h2 class="text-center text-uppercase">{{respuesta.mensaje}}</h2>
         <hr class="mt-0">
         <div id="respuesta-div">
-          <div class="d-flex justify-content-center">
+          <div class="justify-content-center">
             <img src="{{respuesta.url}}" onerror="this.onerror=null;this.src='/images/not-found.png';width=200"
               class="img-fluid text-center d-block margin" id="imagen-documento" width="500">
           </div>
@@ -74,9 +79,9 @@
             <p><strong>A nombre de:</strong> {{respuesta.nombre}}</p>
             <p><strong>Matrícula número:</strong> {{respuesta.matricula}}</p>
             <p><strong>Bloque:</strong> {{respuesta.bloque}}</p>
-            <p id="documento-ver"><strong>Click aqui para descargar el documento::</strong> {{#if respuesta.url}}<a href="{{respuesta.url}}"
-                target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
+            <p id="documento-ver"><strong>Click aqui para descargar el documento::</strong> {{#if respuesta.url}}<a
+                href="{{respuesta.url}}" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
                 </svg></a></p>
@@ -97,7 +102,8 @@
         </div>
 
         <div class="d-flex justify-content-center align-items-center">
-          <a id="btnPDF" type="button" data-hash="{{respuesta.hash}}" class="btn btn-secondary m-2 text-white">Descargar
+          <a id="btnPDF" type="button" data-hash="{{respuesta.hash}}"
+            class="btn btn-secondary m-2 text-white">Descargar
             PDF</a>
           <a type="button" class="btn btn-secondary m-2 text-white" id="btnImprimirRespuesta">Imprimir</a>
           {{#if btnCerrar}}

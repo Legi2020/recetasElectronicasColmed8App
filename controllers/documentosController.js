@@ -56,7 +56,7 @@ const registrarDocumento = async(req, res) => {
                     const medicoBD = await Medicos.findOne({ where: { matricula: medicoMatricula } });
                     req.flash('alert-success', 'Documento ya registrado');
                     respuesta = {
-                        mensaje: 'Documento ya registrado',
+                        mensaje: 'Documento ya registrado. Diríjase hacia el final de la página.',
                         hash: hashDocumento,
                         matricula: medicoMatricula,
                         nombre: medicoBD.nombre,
@@ -115,7 +115,7 @@ const registrarDocumento = async(req, res) => {
                     documentoRegistradoEnBD.fecha = fechaRegistrado;
                     documentoRegistradoEnBD.save();
                 } catch (err) { console.log('Error al actualizar la fecha en la BD'); }
-                req.flash('alert-success', 'Documento registrado con éxito');
+                req.flash('alert-success', 'Documento registrado con éxito. Diríjase hacia el final de la página.');
                 respuesta = {
                     mensaje: 'Documento registrado con éxito',
                     hash: hashDocumento,
@@ -215,7 +215,7 @@ const encontrarDocumento = async(req, res) => {
         }
         // Genero QR
         const qrCode = await QRCode.toDataURL(`http://${req.headers.host}/comprobar/${hashDocumento}`);
-        req.flash('alert-success', 'Documento encontrado con éxito');
+        req.flash('alert-success', 'Documento encontrado con éxito. Diríjase hacia el final de la página.');
         respuesta = {
             mensaje: 'Documento encontrado con éxito',
             hash: hashDocumento,

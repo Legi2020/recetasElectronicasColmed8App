@@ -22,6 +22,7 @@ const {
     formularioRegistrar,
     formComprobarDocumento,
     formularioDatosMatriculado,
+    formularioInstruccionesDeUso
 } = require('../controllers/usuariosController.js');
 
 
@@ -60,6 +61,8 @@ router.get('/reestablecer-password/:token', reestablecerPassword);
 router.post('/reestablecer-password/:token', reestablecerPasswordToken);
 // Datos cuenta usuario
 router.get('/datos-matriculado', usuarioAutenticado, formularioDatosMatriculado);
+// Instrucciones de uso
+router.get('/instrucciones', usuarioAutenticado, formularioInstruccionesDeUso);
 
 
 module.exports = { router };

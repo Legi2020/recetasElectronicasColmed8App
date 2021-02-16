@@ -38,10 +38,18 @@ const formularioDatosMatriculado = async(req, res) => {
     })
 };
 
+const formularioInstruccionesDeUso = async(req, res) => {
+    res.render('instrucciones-uso', {
+        nombrePagina: 'Instrucciones de Uso',
+        logueado: true
+    });
+};
+
 module.exports = {
     home,
     formIniciarSesion,
     formComprobarDocumento,
     formularioRegistrar,
-    formularioDatosMatriculado
+    formularioDatosMatriculado,
+    formularioInstruccionesDeUso
 };

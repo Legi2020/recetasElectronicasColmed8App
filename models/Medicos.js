@@ -29,12 +29,6 @@ const Medicos = db.define('medico', {
     bloqueo: Sequelize.BIGINT,
     token: Sequelize.STRING,
     expira: Sequelize.BIGINT
-}, {
-    hooks: {
-        beforeCreate(usuario) {
-            usuario.password = bcrypt.hashSync(usuario.password, bcrypt.genSaltSync(10));
-        }
-    }
 });
 
 // Métodos personalizados

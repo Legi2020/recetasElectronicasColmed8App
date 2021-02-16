@@ -57,6 +57,10 @@ nav img {
     margin: 0 auto;
 }
 
+.fa-file-alt {
+    margin-top: 0 !important;
+}
+
 
 /* Estilos del input file */
 
@@ -133,12 +137,11 @@ nav img {
 }
 
 .dropFileForm {
-    margin: 10px;
+    margin: 30px;
     text-align: center;
     border-radius: 8px;
     overflow: hidden;
     transition: 0.5s;
-    height: 80%;
     padding: 0 !important;
 }
 
@@ -227,7 +230,7 @@ nav img {
 }
 
 .cuadro-fila {
-    margin-top: 50px;
+    margin-top: 10px;
 }
 
 .columna-registro {
@@ -268,7 +271,8 @@ nav img {
 .btn-rc {
     margin-top: 10px;
     border-radius: 10px;
-    font-size: 25px;
+    font-size: 30px;
+    width: 50;
 }
 
 #responseImagen2 {
@@ -498,6 +502,10 @@ svg {
     display: none;
 }
 
+.borde-redondeado {
+    border-radius: 10px;
+}
+
 
 /* Mensaje de error pagina no existente */
 
@@ -585,23 +593,20 @@ svg {
     .btn-descargar {
         visibility: hidden;
     }
-    .instrucciones {
-        background: rgba(0, 0, 0, .3);
-        border-radius: 10px;
+    .fa-file-alt {
+        margin-top: 10px !important;
+    }
+    .columnas {
+        padding: 0px;
     }
 }
 
 @media only screen and (max-width: 1200px) {
-    .btn-rc {
-        width: auto;
-        height: auto;
-        font-size: 15px;
-    }
     .cuadro-fila {
         margin-top: 0px;
     }
     #fileLabelText {
-        font-size: 14px !important;
+        font-size: 25px !important;
     }
     .container-signin {
         margin-top: 20px;
@@ -615,6 +620,21 @@ svg {
     }
     #responseImagen img {
         width: 40px;
+    }
+    .nombrePagina {
+        border-radius: 10px;
+        background: none;
+        color: #000 !important;
+    }
+    .fa-file-alt {
+        margin-top: 20px !important;
+    }
+    .btn-rc {
+        width: 100%;
+        font-size: 20px;
+    }
+    .nombrePagina {
+        font-size: 20px;
     }
 }
 
