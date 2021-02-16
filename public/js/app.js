@@ -8,6 +8,25 @@ const imprimirRespuesta = () => {
 };
 
 const imprimirPDF = (e) => {
+    let contenido = document.createElement('div');
+    const documentoVer = document.querySelector('#documento-ver');
+    documentoVer.style.display = 'none';
+    const informacion = document.querySelector('#respuesta-info').cloneNode(true);
+    informacion.style.setProperty('padding', "40px");
+    informacion.style.setProperty('font-size', "15px");
+    contenido.appendChild(informacion);
+    fetch('/generar-pdf', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contenido: contenido.outerHTML })
+        }).then(resp => {
+            documentoVer.style.display = 'block';
+            console.log('PDF GENERADO CON ÉXITO!')
+        })
+        .catch(error => console.log(error))
+};
+
+/* const imprimirPDF = (e) => {
     console.log(e.target)
     const nombrePDF = e.target.dataset.hash;
     let contenido = document.createElement('div');
@@ -42,6 +61,7 @@ const imprimirPDF = (e) => {
         .save()
         .catch();
 }
+ */
 
 const validarDatosVacios = (e) => {
     const id = document.querySelector('#id').value;

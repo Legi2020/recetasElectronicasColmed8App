@@ -341,52 +341,29 @@ const comprobarPorUrl = async(req, res) => {
     }
 };
 
+const generarPDFReporte = (req, res) => {
+    try {
+        const contenido = req.body.contenido.toString();
+
+        pdf.create(contenido).toFile(`prueba.pdf`, function(err, res) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+        res.json({ mensaje: 'PDF generado con éxito' });
+    } catch (err) {
+        console.log(err)
+    }
+
+};
+
 
 /**
  * 
  * FUNCIONES LOCALES
  * 
  */
-
-// Registra el documento en la blockchain, verificando antes si existe
-/* const registrarEnBlockchain = async(hash) => {
-    const { timestamp, bloque } = await encontrarEnBlockchain(hash);
-    // Se verifica si ya existe en la blockchain
-    if (parseInt(bloque) !== 0 || bloque === null) {
-        return obj = {
-            hash,
-            timestamp,
-            bloque,
-            existe: true
-        };
-    }
-    await contrato.methods.agregarDocHash(hash).call();
-    const resultado = await web3.eth.getTransactionCount(process.env.BC_DIR_CUENTA);
-    let txOptions = {
-        nonce: web3.utils.toHex(resultado),
-        gasLimit: web3.utils.toHex(800000),
-        gasPrice: web3.utils.toHex(20000000000),
-        to: process.env.BC_DIR_CONTRATO,
-    };
-    const rawTx = txutils.functionTx(abiContrato, "agregarDocHash", [hash], txOptions);
-    try {
-        await sendRaw(rawTx);
-        return obj = {
-            hash: hash,
-            timestamp: 0,
-            bloque: 0,
-            existe: false
-        };
-    } catch (err) {
-        return obj = {
-            hash: hash,
-            timestamp: null,
-            bloque: null,
-            existe: false
-        };
-    }
-
-}; */
 
 const registrarEnBlockchain = async(hash) => {
     const { timestamp, bloque } = await encontrarEnBlockchain(hash);
@@ -488,5 +465,6 @@ module.exports = {
     encontrarDocumento,
     obtenerImagenDocumento,
     comprobarPorUrl,
-    documentosRegistrados
+    documentosRegistrados,
+    generarPDFReporte
 }

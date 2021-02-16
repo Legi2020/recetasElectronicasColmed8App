@@ -4,7 +4,8 @@ const {
     encontrarDocumento,
     obtenerImagenDocumento,
     comprobarPorUrl,
-    documentosRegistrados
+    documentosRegistrados,
+    generarPDFReporte
 } = require('../controllers/documentosController.js');
 const {
     autenticarUsuario,
@@ -63,6 +64,7 @@ router.post('/reestablecer-password/:token', reestablecerPasswordToken);
 router.get('/datos-matriculado', usuarioAutenticado, formularioDatosMatriculado);
 // Instrucciones de uso
 router.get('/instrucciones', usuarioAutenticado, formularioInstruccionesDeUso);
-
+// Generar PDF
+router.post('/generar-pdf', usuarioAutenticado, generarPDFReporte);
 
 module.exports = { router };
