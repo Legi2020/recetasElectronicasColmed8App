@@ -54,9 +54,9 @@ const registrarDocumento = async(req, res) => {
                 try {
                     const { medicoMatricula, url, nombre } = await Documentos.findOne({ where: { hash: hashDocumento } });
                     const medicoBD = await Medicos.findOne({ where: { matricula: medicoMatricula } });
-                    req.flash('alert-success', 'Documento ya registrado');
+                    req.flash('alert-success', 'Documento ya registrado.  Diríjase hacia el final de la página.');
                     respuesta = {
-                        mensaje: 'Documento ya registrado. Diríjase hacia el final de la página.',
+                        mensaje: 'Documento ya registrado.',
                         hash: hashDocumento,
                         matricula: medicoMatricula,
                         nombre: medicoBD.nombre,
@@ -76,7 +76,7 @@ const registrarDocumento = async(req, res) => {
                         mensajes: req.flash()
                     });
                 } catch (err) {
-                    req.flash('alert-success', 'Documento ya registrado');
+                    req.flash('alert-success', 'Documento ya registrado.  Diríjase hacia el final de la página.');
                     respuesta = {
                         mensaje: 'Documento ya registrado',
                         hash: hashDocumento,
