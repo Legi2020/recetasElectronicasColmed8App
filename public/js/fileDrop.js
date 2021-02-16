@@ -32,11 +32,11 @@ function addFiles(event) {
             fileLabelText.innerText = "Seleccione o arrastre un documento aquí";
             return;
         }
-        if (droppedFiles[0].type !== 'image/jpeg' && droppedFiles[0].type !== 'image/png' && droppedFiles[0].type !== 'application/pdf' && droppedFiles[0].type !== 'application/msword' && droppedFiles[0].type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' && droppedFiles[0].type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        if (droppedFiles[0].type !== 'application/pdf') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Atencion!',
-                text: 'Solo se admiten documentos en formato .jpeg, .png, .pdf, .doc, .docx, .xlsx',
+                text: 'Solo se admiten documentos en formato .pdf',
             })
             droppedFiles = '';
             fileLabelText.innerText = "Seleccione o arrastre un documento aquí";

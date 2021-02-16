@@ -23,7 +23,7 @@ const registrarDocumento = async(req, res) => {
     if (req.files) {
         const archivo = req.files.imagen;
         let extension = archivo.mimetype.split('/')[1];
-        if ((archivo.mimetype === 'image/jpeg' || archivo.mimetype === 'image/png' || archivo.mimetype === 'application/pdf' || archivo.mimetype === 'application/msword' || archivo.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || archivo.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') && archivo.size <= 10000000) {
+        if ((archivo.mimetype === 'application/pdf') && archivo.size <= 10000000) {
             // *Calculo del hash del archivo
             const cripto = crypto.createHash('sha256');
             cripto.update(archivo.data);
