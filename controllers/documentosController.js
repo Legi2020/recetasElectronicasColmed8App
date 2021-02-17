@@ -13,6 +13,9 @@ const { web3, contrato } = iniciarConexionBlockchain();
 const abiContrato = require('../abi/contrato.json');
 const QRCode = require('qrcode');
 const pdf = require('html-pdf');
+const merge = require('easy-pdf-merge');
+const fs = require('fs');
+const http = require('http');
 
 
 // Se ejecuta en /documento -> Registrar documento en la blockchain y la BD
@@ -101,7 +104,7 @@ const registrarDocumento = async(req, res) => {
 
             } else {
                 // *Si no existe lo registro
-                archivo.mv(`${__dirname}/../public/uploads/${urlDocumento}`);
+                archivo.mv(path.join(__dirname, `${process.env.DIR_IMAGENES}${urlDocumento}`));
                 // Registro documento con fecha null, porque no esta en la blockchain todavia.
                 const documentoRegistradoEnBD = await Documentos.create({ hash: hashDocumento, medicoMatricula: res.locals.usuario.matricula, fecha: null, url: urlDocumento });
                 // Consulto hasta que el documento se registro
@@ -265,6 +268,12 @@ const obtenerImagenDocumento = (req, res) => {
     res.sendFile(path.join(__dirname, `${process.env.DIR_IMAGENES}${url}`));
 };
 
+// Obtiene el pdf firmado del
+const obtenerPDF = (req, res) => {
+    const { url } = req.params;
+    res.sendFile(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${url}`));
+};
+
 // Formulario documentos registrados por el usuario
 const documentosRegistrados = async(req, res) => {
     const documentosRegistrados = await Documentos.findAll({
@@ -341,23 +350,46 @@ const comprobarPorUrl = async(req, res) => {
     }
 };
 
-const generarPDFReporte = (req, res) => {
-    try {
-        const contenido = req.body.contenido.toString();
+const generarPDF = async(req, res) => {
+    const contenido = req.body.contenido.toString();
+    const hashOriginal = req.body.hashDocOriginal;
 
-        pdf.create(contenido).toFile(`prueba.pdf`, function(err, res) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-        });
-        res.json({ mensaje: 'PDF generado con éxito' });
-    } catch (err) {
-        console.log(err)
+    if (fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`))) {
+        console.log('pase')
+        return res.json({ url: `/generar-pdf/${hashOriginal}` });
     }
 
-};
+    pdf.create(contenido).toFile(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`), function(err, res) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+    });
 
+    const pdfOriginal = path.join(__dirname, `${process.env.DIR_IMAGENES}${hashOriginal}`);
+
+    while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`))) {
+        console.log('Todavia no está');
+        await sleep(1000);
+    }
+
+
+    merge([pdfOriginal, path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`)], path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`), function(err) {
+        if (err) {
+            return console.log(err)
+        }
+    });
+
+    while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`))) {
+        console.log('Todavia no está');
+        await sleep(1000);
+    }
+
+    fs.unlinkSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`));
+
+    return res.json({ url: `/generar-pdf/${hashOriginal}` });
+
+};
 
 /**
  * 
@@ -466,5 +498,6 @@ module.exports = {
     obtenerImagenDocumento,
     comprobarPorUrl,
     documentosRegistrados,
-    generarPDFReporte
+    generarPDF,
+    obtenerPDF
 }

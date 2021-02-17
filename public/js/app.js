@@ -8,6 +8,7 @@ const imprimirRespuesta = () => {
 };
 
 const imprimirPDF = (e) => {
+    const hashDocOriginal = document.querySelector('#hash-documento').textContent;
     let contenido = document.createElement('div');
     const documentoVer = document.querySelector('#documento-ver');
     documentoVer.style.display = 'none';
@@ -18,11 +19,10 @@ const imprimirPDF = (e) => {
     fetch('/generar-pdf', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contenido: contenido.outerHTML })
-        }).then(resp => {
-            documentoVer.style.display = 'block';
-            console.log('PDF GENERADO CON ÉXITO!')
+            body: JSON.stringify({ contenido: contenido.outerHTML, hashDocOriginal: hashDocOriginal + '.pdf' })
         })
+        .then(respuesta => respuesta.json())
+        .then(resultado => window.open(resultado.url, 'Download'))
         .catch(error => console.log(error))
 };
 
