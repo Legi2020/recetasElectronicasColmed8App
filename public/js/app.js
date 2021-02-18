@@ -8,6 +8,9 @@ const imprimirRespuesta = () => {
 };
 
 const imprimirPDF = (e) => {
+    e.target.setAttribute('disabled', 'true');
+    document.querySelector('#sk-circle-pdf').classList.remove('oculto');
+    document.querySelector('#texto-spinner-pdf').classList.remove('oculto');
     const hashDocOriginal = document.querySelector('#hash-documento').textContent;
     const parrafoDocumento = document.querySelector('#parrafo-info');
     const imagenQR = document.querySelector('#imagen-qr');
@@ -28,46 +31,14 @@ const imprimirPDF = (e) => {
             body: JSON.stringify({ contenido: contenido.outerHTML, hashDocOriginal: hashDocOriginal + '.pdf' })
         })
         .then(respuesta => respuesta.json())
-        .then(resultado => { window.open(resultado.url, 'Download'); })
+        .then(resultado => {
+            window.open(resultado.url, 'Download');
+            e.target.removeAttribute('disabled');
+            document.querySelector('#sk-circle-pdf').classList.add('oculto');
+            document.querySelector('#texto-spinner-pdf ').classList.add('oculto');
+        })
         .catch(error => console.log(error))
 };
-
-/* const imprimirPDF = (e) => {
-    console.log(e.target)
-    const nombrePDF = e.target.dataset.hash;
-    let contenido = document.createElement('div');
-    let texto = document.createElement('h4');
-    texto.innerHTML = '<h4 class="text-center">INFORMACIÓN DEL DOCUMENTO</h4><hr>';
-    const documentoVer = document.querySelector('#documento-ver');
-    documentoVer.style.display = 'none';
-    contenido.appendChild(texto);
-    contenido.appendChild(document.querySelector('#respuesta-info').cloneNode(true));
-    if (contenido !== '') {
-        documentoVer.style.display = 'block';
-    }
-    html2pdf()
-        .set({
-            margin: 1,
-            filename: nombrePDF,
-            image: {
-                type: 'jpeg',
-                quality: 1
-            },
-            html2canvas: {
-                scale: 3,
-                lleterRendering: true
-            },
-            jsPDF: {
-                unit: 'in',
-                format: 'a4',
-                orientation: 'portrait'
-            }
-        })
-        .from(contenido)
-        .save()
-        .catch();
-}
- */
 
 const validarDatosVacios = (e) => {
     const id = document.querySelector('#id').value;
@@ -103,6 +74,9 @@ if (document.querySelector('.dropFileForm')) {
         document.querySelector('.sk-circle ').classList.remove('oculto');
     });
 }
+
+
+
 
 // Verifica que el input no esta vacio
 const verificarInputVacio = (e) => {

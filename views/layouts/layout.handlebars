@@ -20,16 +20,6 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse menu" id="navbarSupportedContent">
-    <div>
-      <span class="navbar-text d-block text-dark">
-        <strong>Matrícula:</strong> {{usuario.matricula}}
-      </span>
-      <span class="navbar-text d-block text-dark">
-        <strong>Nombre del matriculado:</strong> {{usuario.nombre}}
-      </span>
-
-    </div>
-
     <ul class="navbar-nav ml-auto">
       <li>
         <a class="nav-link" href="/registrar">Registrar</a>
@@ -44,7 +34,7 @@
         </a>
         <div class="dropdown-menu text-center" aria-labelledby="navbarBuscar">
           <a class="nav-link" href="/documento/registrados">Documentos registrados</a>
-          <a class="nav-link" href="/datos-matriculado">Datos del matriculado</a>
+          {{!-- <a class="nav-link" href="/datos-matriculado">Datos del matriculado</a> --}}
           <a class="nav-link" href="/instrucciones">Instrucciones de uso</a>
         </div>
       </li>
@@ -67,10 +57,6 @@
         <h2 class="text-center text-uppercase">{{respuesta.mensaje}}</h2>
         <hr class="mt-0">
         <div id="respuesta-div">
-          {{!-- <div class="justify-content-center">
-            <img src="{{respuesta.url}}" onerror="this.onerror=null;this.src='/images/not-found.png';width=200"
-              class="img-fluid text-center d-block margin" id="imagen-documento" width="500">
-          </div> --}}
           <div class="mt-3">
             <p><strong>Hash del documento:</strong> <span id="hash-documento">{{respuesta.hash}}</span></p>
             <p><strong>Fecha de registro:</strong>{{#if respuesta.timestamp}} {{#mostrarFecha
@@ -88,7 +74,7 @@
               Colegio
               de Médicos de la Provincia de Buenos
               Aires Distrito VIII.<br>
-              Dr.Eduardo Diaz Mena<br>
+              Dr. Eduardo Diaz Mena<br>
               Presidente<br>
               Este documento dispone de un código QR que puede ser utilizado para verificación a través de la página de
               nuestro Colegio.</p>
@@ -103,13 +89,34 @@
           {{/if}}
         </div>
 
+        <span>
+          <div class="sk-circle oculto" id="sk-circle-pdf">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+          </div>
+          </i>
+        </span>
+         <p class="oculto text-center" id="texto-spinner-pdf">Generando PDF Firmado...</p>
+
+
+
         {{#if logueado}}
         <div class="d-flex justify-content-center align-items-center">
-          <a id="btnPDF" type="button" data-hash="{{respuesta.hash}}" class="btn btn-secondary m-2 text-white">Descargar
-            PDF</a>
-          <a type="button" class="btn btn-secondary m-2 text-white" id="btnImprimirRespuesta">Imprimir</a>
+          <button id="btnPDF" type="button" data-hash="{{respuesta.hash}}" class="btn btn-secondary m-2 text-white">Generar
+            PDF Firmado</button>
+          <button type="button" class="btn btn-secondary m-2 text-white" id="btnImprimirRespuesta">Imprimir</button>
           {{#if btnCerrar}}
-          <a type="button" class="btn btn-secondary m-2 text-white" id="btnCerrarRespuesta">Cerrar</a>
+          <button type="button" class="btn btn-secondary m-2 text-white" id="btnCerrarRespuesta">Cerrar</button>
           {{/if}}
         </div>
         {{/if}}

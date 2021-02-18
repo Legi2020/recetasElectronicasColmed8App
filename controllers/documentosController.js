@@ -376,6 +376,10 @@ const generarPDF = async(req, res) => {
 
     const pdfOriginal = path.join(__dirname, `${process.env.DIR_IMAGENES}${hashOriginal}`);
 
+    if(!fs.existsSync(path.join(__dirname, `${process.env.DIR_IMAGENES}${hashOriginal}`))){
+        return res.json({error: 'No se encontró el archivo original'});
+    }
+
     while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`))) {
         console.log('Todavia no está');
         await sleep(1000);
