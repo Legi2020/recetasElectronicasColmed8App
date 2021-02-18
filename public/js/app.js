@@ -8,12 +8,19 @@ const imprimirRespuesta = () => {
 };
 
 const imprimirPDF = (e) => {
-    e.target.setAttribute('disabled', 'true');
-    document.querySelector('#sk-circle-pdf').classList.remove('oculto');
-    document.querySelector('#texto-spinner-pdf').classList.remove('oculto');
     const hashDocOriginal = document.querySelector('#hash-documento').textContent;
     const parrafoDocumento = document.querySelector('#parrafo-info');
     const imagenQR = document.querySelector('#imagen-qr');
+    if (!parrafoDocumento) {
+        return Swal.fire({
+            icon: 'error',
+            title: 'Atencion!',
+            text: 'No existe un documento para generar el PDF',
+        });
+    }
+    e.target.setAttribute('disabled', 'true');
+    document.querySelector('#sk-circle-pdf').classList.remove('oculto');
+    document.querySelector('#texto-spinner-pdf').classList.remove('oculto');
     parrafoDocumento.style.setProperty('margin-bottom', '0px');
     imagenQR.style.setProperty('width', '80px');
     const informacion = document.querySelector('#respuesta-info').cloneNode(true);
@@ -32,10 +39,18 @@ const imprimirPDF = (e) => {
         })
         .then(respuesta => respuesta.json())
         .then(resultado => {
-            window.open(resultado.url, 'Download');
             e.target.removeAttribute('disabled');
             document.querySelector('#sk-circle-pdf').classList.add('oculto');
             document.querySelector('#texto-spinner-pdf ').classList.add('oculto');
+            if (resultado.error) {
+
+                return Swal.fire({
+                    icon: 'error',
+                    title: 'Atencion!',
+                    text: resultado.error,
+                });
+            }
+            window.open(resultado.url, 'Download');
         })
         .catch(error => console.log(error))
 };

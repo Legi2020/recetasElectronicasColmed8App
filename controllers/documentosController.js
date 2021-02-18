@@ -1,22 +1,22 @@
 const crypto = require('crypto');
-const tx = require('ethereumjs-tx');
-const lightwallet = require('eth-lightwallet');
-const txutils = lightwallet.txutils;
 const path = require("path");
 require('dotenv').config({ path: 'variables-sql-server.env' });
 // Modelo de la BD
 const Documentos = require('../models/Documentos.js');
 const Medicos = require('../models/Medicos.js');
-// Conexión con la Blockchain
-const { iniciarConexionBlockchain } = require('../config/bc.js');
-const { web3, contrato } = iniciarConexionBlockchain();
-const abiContrato = require('../abi/contrato.json');
 const QRCode = require('qrcode');
 const pdf = require('html-pdf');
 const merge = require('easy-pdf-merge');
 const fs = require('fs');
-const http = require('http');
 
+const {
+    registrarEnBlockchain,
+    sendRaw,
+    encontrarEnBlockchain,
+    convertirTimestampAFechaHora,
+    sleep,
+    verificarContador
+} = require('../helpers/funciones');
 
 // Se ejecuta en /documento -> Registrar documento en la blockchain y la BD
 const registrarDocumento = async(req, res) => {
@@ -361,6 +361,7 @@ const comprobarPorUrl = async(req, res) => {
 const generarPDF = async(req, res) => {
     const contenido = req.body.contenido.toString();
     const hashOriginal = req.body.hashDocOriginal;
+    let cont = 0;
 
     if (fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`))) {
         console.log('pase')
@@ -370,143 +371,49 @@ const generarPDF = async(req, res) => {
     pdf.create(contenido).toFile(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`), function(err, res) {
         if (err) {
             console.log(err);
-            return;
+            return res.status(500).json({ error: 'No se pudo crear el archivo con la información' });
         }
     });
 
     const pdfOriginal = path.join(__dirname, `${process.env.DIR_IMAGENES}${hashOriginal}`);
 
-    if(!fs.existsSync(path.join(__dirname, `${process.env.DIR_IMAGENES}${hashOriginal}`))){
-        return res.json({error: 'No se encontró el archivo original'});
+    if (!fs.existsSync(pdfOriginal)) {
+        return res.status(500).json({ error: 'No se encontró el archivo original' });
     }
 
-    while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`))) {
-        console.log('Todavia no está');
+    while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`)) || cont > 10) {
+        cont++;
         await sleep(1000);
     }
 
+    if (verificarContador(cont)) {
+        return res.status(500).json({ error: 'No se encontró el con la información' });
+    }
 
     merge([pdfOriginal, path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`)], path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`), function(err) {
         if (err) {
-            return console.log(err)
+            return res.status(500).json({ error: 'No se pudo generar el documento firmado' });
         }
     });
 
-    while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`))) {
-        console.log('Todavia no está');
+    cont = 0;
+    while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`)) || cont > 10) {
+        cont++;
         await sleep(1000);
     }
 
+    if (verificarContador(cont)) {
+        return res.status(500).json({ error: 'No se encontró el documento firmado' });
+    }
+
     fs.unlink(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`), function(err) {
-        if (err) throw err;
-        // if no error, file has been deleted successfully
-        console.log('File deleted!');
+
     });
 
     return res.json({ url: `/generar-pdf/${hashOriginal}` });
 
 };
 
-/**
- * 
- * FUNCIONES LOCALES
- * 
- */
-
-const registrarEnBlockchain = async(hash) => {
-    const { timestamp, bloque } = await encontrarEnBlockchain(hash);
-    // Se verifica si ya existe en la blockchain
-    if (parseInt(bloque) !== 0 || bloque === null) {
-        return obj = {
-            hash,
-            timestamp,
-            bloque,
-            existe: true
-        };
-    }
-    await contrato.methods.agregarDocHash(hash).call();
-    const resultado = await web3.eth.getTransactionCount(process.env.BC_DIR_CUENTA);
-    console.log(await web3.eth.getBlockTransactionCount('pending'))
-        /*   web3.eth.getTransaction('pending').then(console.log); */
-    let txOptions = {
-        nonce: web3.utils.toHex(resultado),
-        gasLimit: web3.utils.toHex(800000),
-        gasPrice: web3.utils.toHex(20000000000),
-        to: process.env.BC_DIR_CONTRATO,
-    };
-    const rawTx = txutils.functionTx(abiContrato, "agregarDocHash", [hash], txOptions);
-    try {
-        await sendRaw(rawTx);
-        return obj = {
-            hash: hash,
-            timestamp: 0,
-            bloque: 0,
-            existe: false
-        };
-    } catch (err) {
-        return obj = {
-            hash: hash,
-            timestamp: null,
-            bloque: null,
-            existe: false
-        };
-    }
-
-};
-
-// Crea la transaccion para luego ser enviada
-const sendRaw = (rawTx) => {
-    return new Promise((resolve, reject) => {
-        const privateKey = new Buffer.from(process.env.BC_KEY_CUENTA, "hex"); //keys.privKey es el archivo json y llama de keys la parte priv
-        const transaction = new tx(rawTx);
-        transaction.sign(privateKey);
-        const serializedTx = transaction.serialize().toString("hex");
-        web3.eth.sendSignedTransaction("0x" + serializedTx, function(error, result) {
-            if (error) return reject(error);
-            resolve(result);
-        });
-    })
-};
-
-// Busca un documento en la blockchain
-const encontrarEnBlockchain = (hash) => {
-    return new Promise((resolve, reject) => {
-        contrato.methods.encontrarDocHash(hash).call((err, res) => {
-            if (err) return reject(err);
-            resolve({
-                timestamp: res[0],
-                bloque: res[1]
-            });
-        })
-    })
-};
-
-const convertirTimestampAFechaHora = (timestamp) => {
-    const fechaArg = new Date(timestamp * 1000).toLocaleDateString("es-AR");
-    const horaArg = new Date(timestamp * 1000).toLocaleTimeString("es-AR");
-    const fechaSplit = fechaArg.split('/');
-    const anio = fechaSplit[2];
-    let mes;
-    let dia;
-    if (fechaSplit[1].length === 1) {
-        mes = `0${fechaSplit[1]}`
-    } else {
-        mes = fechaSplit[1]
-    }
-    if (fechaSplit[0].length === 1) {
-        dia = `0${fechaSplit[0]}`
-    } else {
-        dia = fechaSplit[0]
-    }
-    const fechaFinal = `${anio}-${mes}-${dia} ${horaArg}`;
-    return fechaFinal;
-};
-
-function sleep(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-};
 
 module.exports = {
     registrarDocumento,
