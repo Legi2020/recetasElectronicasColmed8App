@@ -76,8 +76,6 @@
             <p><strong>Fecha de registro:</strong>{{#if respuesta.timestamp}} {{#mostrarFecha
               respuesta.timestamp}}{{/mostrarFecha}}{{/if}}</p>
             {{#if respuesta.matricula}}<p><strong>Registrado por:</strong> Colegio de Médicos Distrito VIII</p>{{/if}}
-            <p><strong>A nombre de:</strong> {{respuesta.nombre}}</p>
-            <p><strong>Matrícula número:</strong> {{respuesta.matricula}}</p>
             <p><strong>Bloque:</strong> {{respuesta.bloque}}</p>
             <p id="documento-ver"><strong>Click aqui para descargar el documento:</strong> {{#if respuesta.url}}<a
                 href="{{respuesta.url}}" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -86,10 +84,12 @@
                     d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
                 </svg></a></p>
             <span  id="respuesta-info">
-            <p class="text-justify font-weight-bold" id="parrafo-info">El presente documento ha sido firmado electrónicamente por el
+            <p class="text-justify" id="parrafo-info">El presente documento ha sido firmado electrónicamente por el
               Colegio
               de Médicos de la Provincia de Buenos
               Aires Distrito VIII.<br>
+              Dr.Eduardo Diaz Mena<br>
+              Presidente<br>
               Este documento dispone de un código QR que puede ser utilizado para verificación a través de la página de
               nuestro Colegio.</p>
             {{/if}}

@@ -393,7 +393,11 @@ const generarPDF = async(req, res) => {
         await sleep(1000);
     }
 
-    fs.unlinkSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`));
+    fs.unlink(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`), function(err) {
+        if (err) throw err;
+        // if no error, file has been deleted successfully
+        console.log('File deleted!');
+    });
 
     return res.json({ url: `/generar-pdf/${hashOriginal}` });
 

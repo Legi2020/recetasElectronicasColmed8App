@@ -20,7 +20,7 @@ const imprimirPDF = (e) => {
     contenido.style.setProperty('padding', '40px');
     contenido.style.setProperty('font-size', '11px');
     contenido.style.setProperty('text-align', 'justify');
-    contenido.style.setProperty('margin-top', '825px');
+    contenido.style.setProperty('margin-top', '812px');
     contenido.appendChild(informacion);
     fetch('/generar-pdf', {
             method: 'POST',
