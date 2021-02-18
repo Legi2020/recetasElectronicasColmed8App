@@ -1,7 +1,7 @@
 <h2 class="text-center text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
 {{>mostrarAlertas}}
 <div class="row text-center justify-content-center h-100 cuadro-fila">
-  <div class="col-sm-6 columnas columna-registro centrar">
+  <div class="col-12 col-md-6 columnas columna-registro centrar">
    {{!--  <h2 class="text-uppercase font-weight-bold texto-div">Registre un documento</h2> --}}
     <form action="/registrar" class="dropFileForm" id="registrarForm" enctype="multipart/form-data" method="POST">
       <input type="file" name="imagen" id="fileInput" multiple onchange="addFiles(event)">

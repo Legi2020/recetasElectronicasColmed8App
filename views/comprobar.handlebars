@@ -1,7 +1,7 @@
 <h2 class="text-center text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
 {{>mostrarAlertas}}
 <div class="row text-center  justify-content-center h-100 cuadro-fila centrar">
-  <div class="col-sm-6 columnas columna-registro">
+  <div class="col-12 col-md-6 columnas columna-registro">
    {{!--  <h2 class="text-uppercase font-weight-bold texto-div">Compruebe un documento</h2> --}}
     <form action="/comprobar" class="dropFileForm" id="comprobarForm" enctype="multipart/form-data" method="POST">
       <input type="file" name="imagen" id="fileInput" multiple onchange="addFiles(event)">
@@ -27,7 +27,6 @@
             <div class="sk-circle12 sk-child"></div>
           </div>
           </i>
-
         </span>
       </label>
       <input type="submit" name="enviarBtn" id="sendHashButton" class="btn btn-secondary d-inline-inline-block btn-rc"
