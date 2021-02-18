@@ -9,12 +9,18 @@ const imprimirRespuesta = () => {
 
 const imprimirPDF = (e) => {
     const hashDocOriginal = document.querySelector('#hash-documento').textContent;
-    let contenido = document.createElement('div');
-    const documentoVer = document.querySelector('#documento-ver');
-    documentoVer.style.display = 'none';
+    const parrafoDocumento = document.querySelector('#parrafo-info');
+    const imagenQR = document.querySelector('#imagen-qr');
+    parrafoDocumento.style.setProperty('margin-bottom', '0px');
+    imagenQR.style.setProperty('width', '80px');
     const informacion = document.querySelector('#respuesta-info').cloneNode(true);
-    informacion.style.setProperty('padding', "40px");
-    informacion.style.setProperty('font-size', "15px");
+    parrafoDocumento.style.setProperty('margin-bottom', '1 rem');
+    imagenQR.style.setProperty('width', '100px');
+    let contenido = document.createElement('div');
+    contenido.style.setProperty('padding', '40px');
+    contenido.style.setProperty('font-size', '11px');
+    contenido.style.setProperty('text-align', 'justify');
+    contenido.style.setProperty('margin-top', '825px');
     contenido.appendChild(informacion);
     fetch('/generar-pdf', {
             method: 'POST',
@@ -22,7 +28,7 @@ const imprimirPDF = (e) => {
             body: JSON.stringify({ contenido: contenido.outerHTML, hashDocOriginal: hashDocOriginal + '.pdf' })
         })
         .then(respuesta => respuesta.json())
-        .then(resultado => window.open(resultado.url, 'Download'))
+        .then(resultado => { window.open(resultado.url, 'Download'); })
         .catch(error => console.log(error))
 };
 

@@ -293,10 +293,16 @@ const documentosRegistrados = async(req, res) => {
 // Comprueba documento por url
 const comprobarPorUrl = async(req, res) => {
     let respuesta;
+    let logueado = false;
     const { hash } = req.params;
     if (hash.length !== 66) {
         return res.redirect('/');
     }
+
+    if (res.locals.usuario.matricula) {
+        logueado = true;
+    }
+
     try {
         const { timestamp, bloque } = await encontrarEnBlockchain(hash);
         if (parseInt(bloque) === 0) {
@@ -313,6 +319,7 @@ const comprobarPorUrl = async(req, res) => {
             return res.render('comprobarPorUrl', {
                 ventana: true,
                 respuesta,
+                logueado,
                 nombrePagina: 'Comprobar documento'
             });
         }
@@ -340,6 +347,7 @@ const comprobarPorUrl = async(req, res) => {
         return res.render('comprobarPorUrl', {
             ventana: true,
             respuesta,
+            logueado,
             nombrePagina: 'Comprobar documento'
         });
     } catch {
