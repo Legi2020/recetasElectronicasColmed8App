@@ -25,10 +25,10 @@ const cerrarSesion = (req, res) => {
 
 const validarInicioSesion = (req, res, next) => {
     // Sanitizar campos
-    req.checkBody('matricula').escape();
+    req.checkBody('usuario').escape();
     req.checkBody('password').escape();
     // Verificar si los campos estan vacios
-    req.checkBody('matricula', 'Ingrese un número de matrícula').notEmpty();
+    req.checkBody('usuario', 'Ingrese un número de matrícula').notEmpty();
     req.checkBody('password', 'Ingrese una contraseña').notEmpty();
 
     const errores = req.validationErrors();

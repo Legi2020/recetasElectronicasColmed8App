@@ -4,7 +4,6 @@ const { Op } = require("sequelize");
 require('dotenv').config({ path: 'variables-sql-server.env' });
 // Modelo de la BD
 const Documentos = require('../models/Documentos.js');
-const Medicos = require('../models/Medicos.js');
 const QRCode = require('qrcode');
 const pdf = require('html-pdf');
 const merge = require('easy-pdf-merge');
@@ -31,12 +30,7 @@ const registrarDocumento = async(req, res) => {
             const cripto = crypto.createHash('sha256');
             cripto.update(archivo.data);
             hashDocumento = `0x${cripto.digest('hex')}`;
-            // Modifico la extensión si es un .docx o .xlsx
-            if (archivo.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                extension = 'docx';
-            } else if (archivo.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                extension = 'xlsx';
-            }
+
             urlDocumento = `${hashDocumento}.${extension}`;
             // *Verifica si existe el archivo previamente
             const { timestamp, bloque } = await registrarEnBlockchain(hashDocumento);
@@ -55,14 +49,12 @@ const registrarDocumento = async(req, res) => {
             if (bloque != 0) {
                 // Trato el error de que este en la blockchain pero no en la Base de datos
                 try {
-                    const { medicoMatricula, url, nombre } = await Documentos.findOne({ where: { hash: hashDocumento } });
-                    const medicoBD = await Medicos.findOne({ where: { matricula: medicoMatricula } });
+                    const { url } = await Documentos.findOne({ where: { hash: hashDocumento } });
+
                     req.flash('alert-success', 'Documento ya registrado.  Diríjase hacia el final de la página.');
                     respuesta = {
                         mensaje: 'Documento ya registrado.',
                         hash: hashDocumento,
-                        matricula: medicoMatricula,
-                        nombre: medicoBD.nombre,
                         timestamp: fechaEncontrado,
                         bloque,
                         url: `/documento/imagen/${url}`,
@@ -83,9 +75,7 @@ const registrarDocumento = async(req, res) => {
                     respuesta = {
                         mensaje: 'Documento ya registrado',
                         hash: hashDocumento,
-                        matricula: null,
                         timestamp: fechaEncontrado,
-                        nombre: null,
                         bloque,
                         url: null,
                         existe: true,
@@ -106,7 +96,7 @@ const registrarDocumento = async(req, res) => {
                 // *Si no existe lo registro
                 archivo.mv(path.join(__dirname, `${process.env.DIR_IMAGENES}${urlDocumento}`));
                 // Registro documento con fecha null, porque no esta en la blockchain todavia.
-                const documentoRegistradoEnBD = await Documentos.create({ hash: hashDocumento, medicoMatricula: res.locals.usuario.matricula, fecha: null, url: urlDocumento });
+                const documentoRegistradoEnBD = await Documentos.create({ hash: hashDocumento, fecha: null, url: urlDocumento });
                 // Consulto hasta que el documento se registro
                 let respuestaEncontrado = await encontrarEnBlockchain(hashDocumento);
                 while (parseInt(respuestaEncontrado.bloque) === 0) {
@@ -122,8 +112,6 @@ const registrarDocumento = async(req, res) => {
                 respuesta = {
                     mensaje: 'Documento registrado con éxito',
                     hash: hashDocumento,
-                    matricula: res.locals.usuario.matricula,
-                    nombre: res.locals.usuario.nombre,
                     timestamp: fechaRegistrado,
                     bloque: respuestaEncontrado.bloque,
                     url: `/documento/imagen/${urlDocumento}`,
@@ -193,8 +181,6 @@ const encontrarDocumento = async(req, res) => {
             mensaje: 'No se pudo encontrar el documento',
             hash: hashDocumento,
             timestamp: null,
-            matricula: null,
-            nombre: null,
             bloque: null,
             url: null,
             existe: false
@@ -210,7 +196,7 @@ const encontrarDocumento = async(req, res) => {
     }
     try { // Registro documento con fecha null, porque no esta en la blockchain todavia.
         const documentoBD = await Documentos.findOne({ where: { hash: hashDocumento } });
-        const medicoBD = await Medicos.findOne({ where: { matricula: documentoBD.medicoMatricula } });
+
         // Si quedo con fecha null por un error, pero quedo minado
         if (documentoBD.fecha === null) {
             documentoBD.fecha = fechaDeTimestamp;
@@ -223,8 +209,6 @@ const encontrarDocumento = async(req, res) => {
             mensaje: 'Documento encontrado con éxito',
             hash: hashDocumento,
             timestamp: fechaDeTimestamp,
-            matricula: documentoBD.medicoMatricula,
-            nombre: medicoBD.nombre,
             bloque,
             url: `/documento/imagen/${documentoBD.url}`,
             existe: true,
@@ -243,7 +227,6 @@ const encontrarDocumento = async(req, res) => {
         respuesta = {
             mensaje: 'Documento encontrado con éxito',
             hash: hashDocumento,
-            matricula: null,
             timestamp: fechaDeTimestamp,
             bloque,
             url: null,
@@ -283,8 +266,11 @@ const formularioDocumentosRegistrados = (req, res) => {
 
 // Formulario documentos registrados por el usuario
 const documentosRegistrados = async(req, res) => {
+    const fechaDesde = req.body.fechaDesde;
+    const fechaHasta = req.body.fechaHasta;
+    let documentosRegistradosBD;
 
-    if (req.body.fechaDesde === '' || req.body.fechaHasta === '') {
+    if (fechaDesde === '' || fechaHasta === '') {
         req.flash('alert-danger', 'Ambas fechas son obligatorias');
         return res.render('documentosRegistrados', {
             mensajes: req.flash(),
@@ -293,24 +279,36 @@ const documentosRegistrados = async(req, res) => {
         });
     }
 
-    const documentosRegistrados = await Documentos.findAll({
-        where: {
-            medicoMatricula: res.locals.usuario.matricula,
-            fecha: {
-                [Op.between]: [req.body.fechaDesde, req.body.fechaHasta]
-            }
-        },
-        order: [
-            ['fecha', 'DESC']
-        ]
-    });
+    if (fechaDesde === fechaHasta) {
+        documentosRegistradosBD = await Documentos.findAll({
+            where: {
+                fecha: fechaDesde
+            },
+            order: [
+                ['fecha', 'DESC']
+            ]
+        });
+        console.log('pase')
+    } else {
+        documentosRegistradosBD = await Documentos.findAll({
+            where: {
+                fecha: {
+                    [Op.between]: [fechaDesde, fechaHasta]
+                }
+            },
+            order: [
+                ['fecha', 'DESC']
+            ]
+        });
+    }
+
     res.render('documentosRegistrados', {
         logueado: true,
         busqueda: true,
-        fechaDesde: req.body.fechaDesde,
-        fechaHasta: req.body.fechaHasta,
+        fechaDesde,
+        fechaHasta,
         nombrePagina: 'Documentos registrados',
-        documentos: documentosRegistrados
+        documentos: documentosRegistradosBD
     });
 };
 
@@ -324,7 +322,7 @@ const comprobarPorUrl = async(req, res) => {
         return res.redirect('/');
     }
 
-    if (res.locals.usuario.matricula) {
+    if (res.locals.usuario.usuario) {
         logueado = true;
     }
 
@@ -350,7 +348,7 @@ const comprobarPorUrl = async(req, res) => {
         }
         const fecha = convertirTimestampAFechaHora(timestamp);
         const encontrado = await Documentos.findOne({ where: { hash } });
-        const medicoBD = await Medicos.findOne({ where: { matricula: encontrado.medicoMatricula } });
+
         if (encontrado.fecha === null) {
             encontrado.fecha = fecha;
             encontrado.save();
@@ -361,8 +359,6 @@ const comprobarPorUrl = async(req, res) => {
             mensaje: 'Documento encontrado con éxito',
             hash,
             timestamp: fecha,
-            matricula: encontrado.medicoMatricula,
-            nombre: medicoBD.nombre,
             bloque,
             url: `/documento/imagen/${encontrado .url}`,
             existe: true,

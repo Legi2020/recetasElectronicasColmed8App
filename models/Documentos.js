@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 const db = require('../config/db');
-const Medicos = require('./Medicos')
 
 const Documentos = db.define('documento', {
     hash: {
@@ -19,6 +18,5 @@ const Documentos = db.define('documento', {
         trim: true
     },
 });
-Documentos.belongsTo(Medicos, { onDelete: 'cascade' });
 
 module.exports = Documentos;

@@ -43,7 +43,7 @@ app.use(session({
 }));
 
 // Conexión con la BD
-require('./models/Medicos');
+require('./models/Admins');
 require('./models/Documentos');
 db.sync()
     .then(() => console.log('Base de datos conectada.'))

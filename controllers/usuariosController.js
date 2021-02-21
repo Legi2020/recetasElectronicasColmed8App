@@ -4,7 +4,6 @@ const home = (req, res) => {
 
 const formularioRegistrar = (req, res) => {
     res.render('registrar', {
-        matriculaUsuario: res.locals.usuario.id,
         logueado: true,
         nombrePagina: 'Registrar documento'
     });
@@ -12,7 +11,6 @@ const formularioRegistrar = (req, res) => {
 
 const formComprobarDocumento = (req, res) => {
     res.render('comprobar', {
-        matriculaUsuario: res.locals.usuario.id,
         logueado: true,
         nombrePagina: 'Comprobar documento'
     });
