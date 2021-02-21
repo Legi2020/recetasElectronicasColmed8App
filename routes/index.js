@@ -14,17 +14,12 @@ const {
     cerrarSesion,
     usuarioAutenticado,
     validarInicioSesion,
-    formularioPasswordOlvidada,
-    enviarToken,
-    reestablecerPassword,
-    reestablecerPasswordToken
 } = require('../controllers/authController.js');
 const {
     home,
     formIniciarSesion,
     formularioRegistrar,
     formComprobarDocumento,
-    formularioDatosMatriculado,
     formularioInstruccionesDeUso
 } = require('../controllers/usuariosController.js');
 
@@ -56,16 +51,6 @@ router.get('/comprobar/:hash', comprobarPorUrl);
 router.get('/documento/registrados', usuarioAutenticado, formularioDocumentosRegistrados);
 // Buscar documentos registrados
 router.post('/documento/registrados', usuarioAutenticado, documentosRegistrados);
-// Formulario reestablecer password
-router.get('/password-olvidada', formularioPasswordOlvidada);
-// Envio de datos resetar password
-router.post('/password-olvidada', enviarToken);
-// Reestablecer password en la BD
-router.get('/reestablecer-password/:token', reestablecerPassword);
-// Reestablecer password token
-router.post('/reestablecer-password/:token', reestablecerPasswordToken);
-// Datos cuenta usuario
-router.get('/datos-matriculado', usuarioAutenticado, formularioDatosMatriculado);
 // Instrucciones de uso
 router.get('/instrucciones', usuarioAutenticado, formularioInstruccionesDeUso);
 // Obtener PDF firmado

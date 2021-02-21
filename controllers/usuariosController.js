@@ -1,6 +1,3 @@
-const Medicos = require('../models/Medicos');
-
-
 const home = (req, res) => {
     res.redirect('/registrar');
 }
@@ -27,17 +24,6 @@ const formIniciarSesion = (req, res) => {
     });
 };
 
-const formularioDatosMatriculado = async(req, res) => {
-    const matricula = await Medicos.findOne({ where: { matricula: res.locals.usuario.matricula } });
-    res.render('datosMatriculado', {
-        nombrePagina: 'Datos matriculado',
-        logueado: true,
-        matricula: matricula.matricula,
-        email: matricula.email,
-        nombre: matricula.nombre
-    })
-};
-
 const formularioInstruccionesDeUso = async(req, res) => {
     res.render('instrucciones-uso', {
         nombrePagina: 'Instrucciones de Uso',
@@ -50,6 +36,5 @@ module.exports = {
     formIniciarSesion,
     formComprobarDocumento,
     formularioRegistrar,
-    formularioDatosMatriculado,
     formularioInstruccionesDeUso
 };

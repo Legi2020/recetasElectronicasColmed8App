@@ -389,7 +389,6 @@ const generarPDF = async(req, res) => {
     let cont = 0;
 
     if (fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`))) {
-        console.log('pase')
         return res.json({ url: `/generar-pdf/${hashOriginal}` });
     }
 
