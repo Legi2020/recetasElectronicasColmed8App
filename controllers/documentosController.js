@@ -280,9 +280,12 @@ const documentosRegistrados = async(req, res) => {
     }
 
     if (fechaDesde === fechaHasta) {
+        console.log(fechaDesde)
         documentosRegistradosBD = await Documentos.findAll({
             where: {
-                fecha: fechaDesde
+                fecha: {
+                    [Op.startsWith]: fechaDesde
+                }
             },
             order: [
                 ['fecha', 'DESC']
