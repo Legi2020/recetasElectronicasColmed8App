@@ -283,7 +283,7 @@ const formularioDocumentosRegistrados = (req, res) => {
 
 // Formulario documentos registrados por el usuario
 const documentosRegistrados = async(req, res) => {
-    console.log(req.body)
+
     if (req.body.fechaDesde === '' || req.body.fechaHasta === '') {
         req.flash('alert-danger', 'Ambas fechas son obligatorias');
         return res.render('documentosRegistrados', {
