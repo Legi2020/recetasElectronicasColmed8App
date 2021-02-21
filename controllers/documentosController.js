@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const path = require("path");
+const { Op } = require("sequelize");
 require('dotenv').config({ path: 'variables-sql-server.env' });
 // Modelo de la BD
 const Documentos = require('../models/Documentos.js');
@@ -11,7 +12,6 @@ const fs = require('fs');
 
 const {
     registrarEnBlockchain,
-    sendRaw,
     encontrarEnBlockchain,
     convertirTimestampAFechaHora,
     sleep,
@@ -274,16 +274,41 @@ const obtenerPDF = (req, res) => {
     res.sendFile(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${url}`));
 };
 
+const formularioDocumentosRegistrados = (req, res) => {
+    res.render('documentosRegistrados', {
+        logueado: true,
+        nombrePagina: 'Documentos registrados',
+    });
+};
+
 // Formulario documentos registrados por el usuario
 const documentosRegistrados = async(req, res) => {
+    console.log(req.body)
+    if (req.body.fechaDesde === '' || req.body.fechaHasta === '') {
+        req.flash('alert-danger', 'Ambas fechas son obligatorias');
+        return res.render('documentosRegistrados', {
+            mensajes: req.flash(),
+            logueado: true,
+            nombrePagina: 'Documentos registrados'
+        });
+    }
+
     const documentosRegistrados = await Documentos.findAll({
-        where: { medicoMatricula: res.locals.usuario.matricula },
+        where: {
+            medicoMatricula: res.locals.usuario.matricula,
+            fecha: {
+                [Op.between]: [req.body.fechaDesde, req.body.fechaHasta]
+            }
+        },
         order: [
             ['fecha', 'DESC']
         ]
     });
     res.render('documentosRegistrados', {
         logueado: true,
+        busqueda: true,
+        fechaDesde: req.body.fechaDesde,
+        fechaHasta: req.body.fechaHasta,
         nombrePagina: 'Documentos registrados',
         documentos: documentosRegistrados
     });
@@ -420,6 +445,7 @@ module.exports = {
     encontrarDocumento,
     obtenerImagenDocumento,
     comprobarPorUrl,
+    formularioDocumentosRegistrados,
     documentosRegistrados,
     generarPDF,
     obtenerPDF

@@ -4,7 +4,10 @@ const cerrarRespuesta = () => {
 };
 
 const imprimirRespuesta = () => {
+    const documentoVer = document.querySelector('#documento-ver');
+    documentoVer.style.display = 'none';
     window.print();
+    documentoVer.style.display = 'block';
 };
 
 const imprimirPDF = (e) => {

@@ -20,4 +20,9 @@ module.exports = {
         fechaSalida = moment(fechaEntrada).fromNow();
         return fechaSalida;
     },
+    mostrarFechaSinDia: (fechaEntrada, fechaSalida) => {
+        moment.locale('es');
+        fechaSalida = moment(fechaEntrada).format('l');
+        return fechaSalida;
+    },
 };

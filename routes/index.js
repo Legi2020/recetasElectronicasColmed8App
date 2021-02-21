@@ -4,6 +4,7 @@ const {
     encontrarDocumento,
     obtenerImagenDocumento,
     comprobarPorUrl,
+    formularioDocumentosRegistrados,
     documentosRegistrados,
     generarPDF,
     obtenerPDF
@@ -52,7 +53,9 @@ router.get('/documento/imagen/:url', obtenerImagenDocumento);
 // Comprobar documento por url
 router.get('/comprobar/:hash', comprobarPorUrl);
 // Formulario documentos registrados
-router.get('/documento/registrados', usuarioAutenticado, documentosRegistrados);
+router.get('/documento/registrados', usuarioAutenticado, formularioDocumentosRegistrados);
+// Buscar documentos registrados
+router.post('/documento/registrados', usuarioAutenticado, documentosRegistrados);
 // Formulario reestablecer password
 router.get('/password-olvidada', formularioPasswordOlvidada);
 // Envio de datos resetar password

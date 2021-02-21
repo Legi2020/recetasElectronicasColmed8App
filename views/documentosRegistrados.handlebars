@@ -1,5 +1,20 @@
 <h2 class="text-center text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
+{{>mostrarAlertas}}
 <div class="row">
+    <div class="col-12 mb-2 formularioDocumentosRegistrados">
+        <form method="POST">
+                <div class="form-group">
+                    <label for="fecha-dnu">Fecha Desde</label>
+                    <input type="date" class="form-control" name="fechaDesde" id="fecha-desde" value="{{fechaDesde}}" required>
+                </div>
+                  <div class="form-group">
+                    <label for="fecha-dnu">Fecha Hasta</label>
+                    <input type="date" class="form-control" name="fechaHasta" id="fecha-hasta" value="{{fechaHasta}}" required>
+                </div>
+                <input type="submit" class="btn btn-secondary" value="BUSCAR">
+        </form>
+    </div>
+    {{#if busqueda}}
     <div class="col table-responsive">
         <table class="table table-bordered table-hover  tabla-registrados">
             <thead class="table-dark table-sm text-center">
@@ -9,13 +24,13 @@
                     <th>Detalles</th>
                 </tr>
             </thead>
-            <tbody class="table-hover">
+            <tbody class="table-hover bg-white">
                 {{#if documentos}}
                 {{#each documentos}}
                 <tr>
                     <td>{{dataValues.hash}}</td>
-                    <td>{{#mostrarFechaAgo dataValues.fecha}}{{dataValues.fecha}}
-                        {{/mostrarFechaAgo}}
+                    <td>{{#mostrarFechaSinDia dataValues.fecha}}{{dataValues.fecha}}
+                        {{/mostrarFechaSinDia}}
                     </td>
                     <td><a class="link-ver" href='/comprobar/{{dataValues.hash}}' target="_blank"><svg
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -27,7 +42,7 @@
                 {{/each}}
                 {{else}}
                 <tr>
-                    <td>No tienes documentos registrados aún.</td>
+                    <td>No se encontraron resultados para tu búsqueda.</td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -35,4 +50,5 @@
             </tbody>
         </table>
     </div>
+      {{/if}}
 </div>
