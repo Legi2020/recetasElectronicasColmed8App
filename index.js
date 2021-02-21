@@ -12,6 +12,10 @@ const expressValidator = require('express-validator');
 const createError = require('http-errors');
 const path = require('path');
 
+/** Importante sino la fecha se guarda con 1 dia menos en la BD */
+const moment = require('moment-timezone');
+moment.tz.setDefault('UTC');
+moment.locale('es');
 
 const app = express();
 

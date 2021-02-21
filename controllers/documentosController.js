@@ -8,13 +8,15 @@ const QRCode = require('qrcode');
 const pdf = require('html-pdf');
 const merge = require('easy-pdf-merge');
 const fs = require('fs');
+const moment = require('moment');
 
 const {
     registrarEnBlockchain,
     encontrarEnBlockchain,
     convertirTimestampAFechaHora,
     sleep,
-    verificarContador
+    verificarContador,
+    fechaArgentina
 } = require('../helpers/funciones');
 
 // Se ejecuta en /documento -> Registrar documento en la blockchain y la BD
@@ -103,10 +105,14 @@ const registrarDocumento = async(req, res) => {
                     respuestaEncontrado = await encontrarEnBlockchain(hashDocumento);
                     await sleep(3000);
                 }
-                const fechaRegistrado = convertirTimestampAFechaHora(respuestaEncontrado.timestamp);
+                moment.locale('es');
+                const fechaRegistrado = moment(convertirTimestampAFechaHora(respuestaEncontrado.timestamp));
+
                 try {
+
                     documentoRegistradoEnBD.fecha = fechaRegistrado;
                     documentoRegistradoEnBD.save();
+
                 } catch (err) { console.log('Error al actualizar la fecha en la BD'); }
                 req.flash('alert-success', 'Documento registrado con éxito. Diríjase hacia el final de la página.');
                 respuesta = {
@@ -175,6 +181,7 @@ const encontrarDocumento = async(req, res) => {
     hashDocumento = `0x${cripto.digest('hex')}`;
     const { timestamp, bloque } = await encontrarEnBlockchain(hashDocumento);
     const fechaDeTimestamp = convertirTimestampAFechaHora(timestamp);
+
     if (parseInt(bloque) === 0) {
         req.flash('alert-danger', 'No se pudo encontrar el documento');
         respuesta = {
@@ -280,7 +287,7 @@ const documentosRegistrados = async(req, res) => {
     }
 
     if (fechaDesde === fechaHasta) {
-        console.log(fechaDesde)
+
         documentosRegistradosBD = await Documentos.findAll({
             where: {
                 fecha: {
@@ -291,7 +298,7 @@ const documentosRegistrados = async(req, res) => {
                 ['fecha', 'DESC']
             ]
         });
-        console.log('pase')
+
     } else {
         documentosRegistradosBD = await Documentos.findAll({
             where: {
