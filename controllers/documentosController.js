@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const { Op } = require("sequelize");
-require('dotenv').config({ path: 'variables-sql-server-bfa.env' });
+require('dotenv').config({ path: 'variables-sql-server.env' });
 // Modelo de la BD
 const Documentos = require('../models/Documentos.js');
 const QRCode = require('qrcode');
@@ -379,7 +379,8 @@ const comprobarPorUrl = async(req, res) => {
             logueado,
             nombrePagina: 'Comprobar documento'
         });
-    } catch {
+    } catch (err) {
+        console.log(err);
         res.status(400).render('error', {
             status: 400,
             mensaje: 'Página no encontrada'

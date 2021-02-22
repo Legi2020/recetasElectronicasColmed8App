@@ -25,4 +25,7 @@ module.exports = {
         fechaSalida = moment(fechaEntrada).format('l') + ' ' + moment(fechaEntrada).format('LT');
         return fechaSalida;
     },
+    mostrarIndice: (index) => {
+        return index + 1;
+    },
 };
