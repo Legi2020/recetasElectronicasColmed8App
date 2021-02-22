@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const path = require("path");
 const { Op } = require("sequelize");
 require('dotenv').config({ path: 'variables-sql-server.env' });
 // Modelo de la BD
@@ -15,8 +14,7 @@ const {
     encontrarEnBlockchain,
     convertirTimestampAFechaHora,
     sleep,
-    verificarContador,
-    fechaArgentina
+    verificarContador
 } = require('../helpers/funciones');
 
 // Se ejecuta en /documento -> Registrar documento en la blockchain y la BD
@@ -96,7 +94,7 @@ const registrarDocumento = async(req, res) => {
 
             } else {
                 // *Si no existe lo registro
-                archivo.mv(path.join(__dirname, `${process.env.DIR_IMAGENES}${urlDocumento}`));
+                archivo.mv(`${process.env.DIR_IMAGENES}${urlDocumento}`);
                 // Registro documento con fecha null, porque no esta en la blockchain todavia.
                 const documentoRegistradoEnBD = await Documentos.create({ hash: hashDocumento, fecha: null, url: urlDocumento });
                 // Consulto hasta que el documento se registro
@@ -255,13 +253,13 @@ const encontrarDocumento = async(req, res) => {
 // Obtiene la imagen del documento
 const obtenerImagenDocumento = (req, res) => {
     const { url } = req.params;
-    res.sendFile(path.join(__dirname, `${process.env.DIR_IMAGENES}${url}`));
+    res.sendFile(`${process.env.DIR_IMAGENES}${url}`);
 };
 
 // Obtiene el pdf firmado del
 const obtenerPDF = (req, res) => {
     const { url } = req.params;
-    res.sendFile(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${url}`));
+    res.sendFile(`${process.env.DIR_DOCUMENTOS_FIRMADOS}${url}`);
 };
 
 const formularioDocumentosRegistrados = (req, res) => {
@@ -394,24 +392,24 @@ const generarPDF = async(req, res) => {
     const hashOriginal = req.body.hashDocOriginal;
     let cont = 0;
 
-    if (fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`))) {
+    if (fs.existsSync(`${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`)) {
         return res.json({ url: `/generar-pdf/${hashOriginal}` });
     }
 
-    pdf.create(contenido).toFile(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`), function(err, res) {
+    pdf.create(contenido).toFile(`${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`, function(err, res) {
         if (err) {
             console.log(err);
             return res.status(500).json({ error: 'No se pudo crear el archivo con la información' });
         }
     });
 
-    const pdfOriginal = path.join(__dirname, `${process.env.DIR_IMAGENES}${hashOriginal}`);
+    const pdfOriginal = `${process.env.DIR_IMAGENES}${hashOriginal}`;
 
     if (!fs.existsSync(pdfOriginal)) {
         return res.status(500).json({ error: 'No se encontró el archivo original' });
     }
 
-    while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`)) || cont > 10) {
+    while (!fs.existsSync(`${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`) || cont > 10) {
         cont++;
         await sleep(1000);
     }
@@ -420,14 +418,14 @@ const generarPDF = async(req, res) => {
         return res.status(500).json({ error: 'No se encontró el con la información' });
     }
 
-    merge([pdfOriginal, path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`)], path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`), function(err) {
+    merge([pdfOriginal, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`], `${process.env.DIR_DOCUMENTOS_FIRMADOS}/${hashOriginal}`, function(err) {
         if (err) {
             return res.status(500).json({ error: 'No se pudo generar el documento firmado' });
         }
     });
 
     cont = 0;
-    while (!fs.existsSync(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`)) || cont > 10) {
+    while (!fs.existsSync(`${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`) || cont > 10) {
         cont++;
         await sleep(1000);
     }
@@ -436,7 +434,7 @@ const generarPDF = async(req, res) => {
         return res.status(500).json({ error: 'No se encontró el documento firmado' });
     }
 
-    fs.unlink(path.join(__dirname, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`), function(err) {
+    fs.unlink(`${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`, function(err) {
 
     });
 

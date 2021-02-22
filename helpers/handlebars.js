@@ -22,7 +22,7 @@ module.exports = {
     },
     mostrarFechaSinDia: (fechaEntrada, fechaSalida) => {
         moment.locale('es');
-        fechaSalida = moment(fechaEntrada).format('l');
+        fechaSalida = moment(fechaEntrada).format('l') + ' ' + moment(fechaEntrada).format('LT');
         return fechaSalida;
     },
 };

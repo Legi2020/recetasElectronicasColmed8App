@@ -19,8 +19,7 @@ const registrarEnBlockchain = async(hash) => {
     }
     await contrato.methods.agregarDocHash(hash).call();
     const resultado = await web3.eth.getTransactionCount(process.env.BC_DIR_CUENTA);
-    console.log(await web3.eth.getBlockTransactionCount('pending'))
-        /*   web3.eth.getTransaction('pending').then(console.log); */
+
     let txOptions = {
         nonce: web3.utils.toHex(resultado),
         gasLimit: web3.utils.toHex(800000),
