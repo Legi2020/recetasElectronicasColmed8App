@@ -1,6 +1,6 @@
 const Web3 = require('web3');
 const abiContrato = require('../abi/contrato.json');
-require('dotenv').config({ path: 'variables-rink.env' });
+require('dotenv').config({ path: 'variables-sql-server-bfa.env' });
 
 
 const iniciarConexionBlockchain = () => {

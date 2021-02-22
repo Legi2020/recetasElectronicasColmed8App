@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const { Op } = require("sequelize");
-require('dotenv').config({ path: 'variables-sql-server.env' });
+require('dotenv').config({ path: 'variables-sql-server-bfa.env' });
 // Modelo de la BD
 const Documentos = require('../models/Documentos.js');
 const QRCode = require('qrcode');
