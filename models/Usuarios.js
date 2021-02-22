@@ -2,11 +2,16 @@ const Sequelize = require('sequelize');
 const db = require('../config/db');
 const bcrypt = require('bcrypt-nodejs');
 
-const Admin = db.define('admin', {
+const Usuarios = db.define('usuarios', {
     usuario: {
         type: Sequelize.STRING(100),
         primaryKey: true,
-        trim: true
+        trim: true,
+        onDelete: 'CASCADE'
+    },
+    nombre: {
+        type: Sequelize.STRING(100),
+        trim: true,
     },
     password: {
         type: Sequelize.STRING(100),
@@ -16,8 +21,8 @@ const Admin = db.define('admin', {
 });
 
 // Métodos personalizados
-Admin.prototype.verficarPassword = (passwordIngresada, passwordLocal) => {
+Usuarios.prototype.verficarPassword = (passwordIngresada, passwordLocal) => {
     return bcrypt.compareSync(passwordIngresada, passwordLocal);
 };
 
-module.exports = Admin;
+module.exports = Usuarios;

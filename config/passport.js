@@ -2,7 +2,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 // Referencia al modelo
-const Admin = require('../models/Admins');
+const Usuario = require('../models/Usuarios');
 
 passport.use(
     new LocalStrategy({
@@ -11,7 +11,7 @@ passport.use(
         },
         async(usuario, password, done) => {
             try {
-                const usuarioBD = await Admin.findOne({ where: { usuario } });
+                const usuarioBD = await Usuario.findOne({ where: { usuario } });
 
                 // El usuario existe, pero el password es incorrecto
                 if (!usuarioBD.verficarPassword(password, usuarioBD.password)) {
@@ -31,13 +31,13 @@ passport.use(
 );
 
 // Serializar el objeto
-passport.serializeUser((admin, callback) => {
-    callback(null, admin);
+passport.serializeUser((usuario, callback) => {
+    callback(null, usuario);
 });
 
 // Desserializar el objeto
-passport.deserializeUser((admin, callback) => {
-    callback(null, admin);
+passport.deserializeUser((usuario, callback) => {
+    callback(null, usuario);
 });
 
 module.exports = passport;

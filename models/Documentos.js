@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const Usuarios = require('./Usuarios');
 const db = require('../config/db');
 
 const Documentos = db.define('documento', {
@@ -18,5 +19,7 @@ const Documentos = db.define('documento', {
         trim: true
     },
 });
+
+Documentos.belongsTo(Usuarios, { onDelete: 'cascade' });
 
 module.exports = Documentos;

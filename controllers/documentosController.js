@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const { Op } = require("sequelize");
 require('dotenv').config({ path: 'variables-sql-server.env' });
 // Modelo de la BD
+const Usuarios = require('../models/Usuarios.js');
 const Documentos = require('../models/Documentos.js');
 const QRCode = require('qrcode');
 const pdf = require('html-pdf');
@@ -50,7 +51,6 @@ const registrarDocumento = async(req, res) => {
                 // Trato el error de que este en la blockchain pero no en la Base de datos
                 try {
                     const { url } = await Documentos.findOne({ where: { hash: hashDocumento } });
-
                     req.flash('alert-success', 'Documento ya registrado.  Diríjase hacia el final de la página.');
                     respuesta = {
                         mensaje: 'Documento ya registrado.',
@@ -95,8 +95,9 @@ const registrarDocumento = async(req, res) => {
             } else {
                 // *Si no existe lo registro
                 archivo.mv(`${process.env.DIR_IMAGENES}${urlDocumento}`);
+
                 // Registro documento con fecha null, porque no esta en la blockchain todavia.
-                const documentoRegistradoEnBD = await Documentos.create({ hash: hashDocumento, fecha: null, url: urlDocumento });
+                const documentoRegistradoEnBD = await Documentos.create({ hash: hashDocumento, usuarioUsuario: res.locals.usuario.usuario, fecha: null, url: urlDocumento });
                 // Consulto hasta que el documento se registro
                 let respuestaEncontrado = await encontrarEnBlockchain(hashDocumento);
                 while (parseInt(respuestaEncontrado.bloque) === 0) {
@@ -294,7 +295,11 @@ const documentosRegistrados = async(req, res) => {
             },
             order: [
                 ['fecha', 'DESC']
-            ]
+            ],
+            include: {
+                model: Usuarios,
+                required: true
+            }
         });
 
     } else {
@@ -306,10 +311,13 @@ const documentosRegistrados = async(req, res) => {
             },
             order: [
                 ['fecha', 'DESC']
-            ]
+            ],
+            include: {
+                model: Usuarios,
+                required: true
+            }
         });
     }
-
     res.render('documentosRegistrados', {
         logueado: true,
         busqueda: true,
@@ -356,7 +364,6 @@ const comprobarPorUrl = async(req, res) => {
         }
         const fecha = convertirTimestampAFechaHora(timestamp);
         const encontrado = await Documentos.findOne({ where: { hash } });
-
         if (encontrado.fecha === null) {
             encontrado.fecha = fecha;
             encontrado.save();
