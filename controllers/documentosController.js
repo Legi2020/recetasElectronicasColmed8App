@@ -44,7 +44,7 @@ const registrarDocumento = async(req, res) => {
             }
             const fechaEncontrado = convertirTimestampAFechaHora(timestamp);
             // Genero QR
-            const qrCode = await QRCode.toDataURL(`http://${req.headers.host}/comprobar/${hashDocumento}`);
+            const qrCode = await QRCode.toDataURL(`${process.env.URL_VERIFICADOR}/comprobar/${hashDocumento}`);
             // *Si ya existe muestro los datos del documento registrado
             if (bloque != 0) {
                 // Trato el error de que este en la blockchain pero no en la Base de datos
@@ -208,7 +208,7 @@ const encontrarDocumento = async(req, res) => {
             documentoBD.save();
         }
         // Genero QR
-        const qrCode = await QRCode.toDataURL(`http://${req.headers.host}/comprobar/${hashDocumento}`);
+        const qrCode = await QRCode.toDataURL(`${process.env.URL_VERIFICADOR}/comprobar/${hashDocumento}`);
         req.flash('alert-success', 'Documento encontrado con éxito. Diríjase hacia el final de la página.');
         respuesta = {
             mensaje: 'Documento encontrado con éxito',
@@ -362,7 +362,7 @@ const comprobarPorUrl = async(req, res) => {
             encontrado.save();
         }
         // Genero QR
-        const qrCode = await QRCode.toDataURL(`http://${req.headers.host}/comprobar/${hash}`);
+        const qrCode = await QRCode.toDataURL(`${process.env.URL_VERIFICADOR}/comprobar/${hash}`);
         respuesta = {
             mensaje: 'Documento encontrado con éxito',
             hash,
