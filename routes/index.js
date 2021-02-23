@@ -5,7 +5,6 @@ const {
     obtenerImagenDocumento,
     comprobarPorUrl,
     formularioDocumentosRegistrados,
-    documentosRegistrados,
     generarPDF,
     obtenerPDF
 } = require('../controllers/documentosController.js');
@@ -49,8 +48,6 @@ router.get('/documento/imagen/:url', obtenerImagenDocumento);
 router.get('/comprobar/:hash', comprobarPorUrl);
 // Formulario documentos registrados
 router.get('/documento/registrados', usuarioAutenticado, formularioDocumentosRegistrados);
-// Buscar documentos registrados
-router.post('/documento/registrados', usuarioAutenticado, documentosRegistrados);
 // Instrucciones de uso
 router.get('/instrucciones', usuarioAutenticado, formularioInstruccionesDeUso);
 // Obtener PDF firmado

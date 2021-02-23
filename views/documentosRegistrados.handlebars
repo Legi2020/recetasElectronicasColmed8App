@@ -1,22 +1,8 @@
 <h2 class="text-center text-uppercase text-white p-3 nombrePagina">{{nombrePagina}}</h2>
 {{>mostrarAlertas}}
 <div class="row">
-    <div class="col-12 mb-2 formularioDocumentosRegistrados">
-        <form method="POST">
-                <div class="form-group">
-                    <label for="fecha-dnu">Fecha Desde</label>
-                    <input type="date" class="form-control" name="fechaDesde" id="fecha-desde" value="{{fechaDesde}}" required>
-                </div>
-                  <div class="form-group">
-                    <label for="fecha-dnu">Fecha Hasta</label>
-                    <input type="date" class="form-control" name="fechaHasta" id="fecha-hasta" value="{{fechaHasta}}" required>
-                </div>
-                <input type="submit" class="btn btn-secondary" value="BUSCAR">
-        </form>
-    </div>
-    {{#if busqueda}}
     <div class="col-12 mt-2 mb-2">
-    <p class="mb-1"><strong>Cantidad de registros: </strong>{{documentos.length}}</p>
+    {{#if documentos.length }}<p class="mb-1"><strong>Cantidad de registros: </strong>{{documentos.length}}</p>{{/if}}
     </div>
     <div class="col-12 table-responsive">
         <table class="table table-bordered table-hover  tabla-registrados">
@@ -31,7 +17,7 @@
             </thead>
             <tbody class="table-hover bg-white">
                 {{#if documentos}}
-                {{#each documentos}}
+                 {{#each documentos}}
                 <tr>
                     <td class="align-middle text-uppercase">{{#mostrarIndice @index}}{{/mostrarIndice}}</td>
                     <td class="align-middle">{{dataValues.hash}}</td>
@@ -49,7 +35,7 @@
                 {{/each}}
                 {{else}}
                 <tr>
-                    <td>No se encontraron resultados para tu búsqueda.</td>
+                    <td>No tienes documentos registrados aún.</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -59,5 +45,4 @@
             </tbody>
         </table>
     </div>
-      {{/if}}
 </div>

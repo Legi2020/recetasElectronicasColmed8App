@@ -17,6 +17,13 @@ const Usuarios = db.define('usuarios', {
         type: Sequelize.STRING(100),
         allowNull: false,
         trim: true
+    },
+    estado: Sequelize.SMALLINT
+}, {
+    hooks: {
+        beforeCreate(usuario) {
+            usuario.password = bcrypt.hashSync(usuario.password, bcrypt.genSaltSync(10));
+        }
     }
 });
 

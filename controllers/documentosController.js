@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const { Op } = require("sequelize");
 require('dotenv').config({ path: 'variables-sql-server.env' });
 // Modelo de la BD
 const Usuarios = require('../models/Usuarios.js');
@@ -263,71 +262,25 @@ const obtenerPDF = (req, res) => {
     res.sendFile(`${process.env.DIR_DOCUMENTOS_FIRMADOS}${url}`);
 };
 
-const formularioDocumentosRegistrados = (req, res) => {
-    res.render('documentosRegistrados', {
-        logueado: true,
-        nombrePagina: 'Documentos registrados',
+const formularioDocumentosRegistrados = async(req, res) => {
+    const documentosRegistradosBD = await Documentos.findAll({
+        where: { usuarioUsuario: res.locals.usuario.usuario },
+        order: [
+            ['fecha', 'DESC']
+        ],
+        include: {
+            model: Usuarios,
+            required: true
+        }
     });
-};
 
-// Formulario documentos registrados por el usuario
-const documentosRegistrados = async(req, res) => {
-    const fechaDesde = req.body.fechaDesde;
-    const fechaHasta = req.body.fechaHasta;
-    let documentosRegistradosBD;
-
-    if (fechaDesde === '' || fechaHasta === '') {
-        req.flash('alert-danger', 'Ambas fechas son obligatorias');
-        return res.render('documentosRegistrados', {
-            mensajes: req.flash(),
-            logueado: true,
-            nombrePagina: 'Documentos registrados'
-        });
-    }
-
-    if (fechaDesde === fechaHasta) {
-
-        documentosRegistradosBD = await Documentos.findAll({
-            where: {
-                fecha: {
-                    [Op.startsWith]: fechaDesde
-                }
-            },
-            order: [
-                ['fecha', 'DESC']
-            ],
-            include: {
-                model: Usuarios,
-                required: true
-            }
-        });
-
-    } else {
-        documentosRegistradosBD = await Documentos.findAll({
-            where: {
-                fecha: {
-                    [Op.between]: [fechaDesde, fechaHasta]
-                }
-            },
-            order: [
-                ['fecha', 'DESC']
-            ],
-            include: {
-                model: Usuarios,
-                required: true
-            }
-        });
-    }
     res.render('documentosRegistrados', {
         logueado: true,
         busqueda: true,
-        fechaDesde,
-        fechaHasta,
         nombrePagina: 'Documentos registrados',
         documentos: documentosRegistradosBD
     });
 };
-
 
 // Comprueba documento por url
 const comprobarPorUrl = async(req, res) => {
@@ -457,7 +410,6 @@ module.exports = {
     obtenerImagenDocumento,
     comprobarPorUrl,
     formularioDocumentosRegistrados,
-    documentosRegistrados,
     generarPDF,
     obtenerPDF
 }
