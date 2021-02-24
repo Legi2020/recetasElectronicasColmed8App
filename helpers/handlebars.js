@@ -27,5 +27,15 @@ module.exports = {
     },
     mostrarIndice: (index) => {
         return index + 1;
+    },
+    mostrarFirmante: (firmante) => {
+
+        if (firmante === 'presidente') {
+            return 'Dr. Eduardo Diaz Mena<br> Presidente<br>'
+        } else if (firmante === 'secretaria') {
+            return 'Dra. Graciela Susana Ridao<br> Secretaria<br>'
+        } else {
+            return 'Dr. Eduardo Diaz Mena - Presidente<br>Dra. Graciela Susana Ridao - Secretaria<br>'
+        }
     }
 };

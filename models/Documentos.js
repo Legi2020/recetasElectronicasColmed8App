@@ -18,6 +18,7 @@ const Documentos = db.define('documento', {
         allowNull: false,
         trim: true
     },
+    firmante: Sequelize.STRING(15)
 });
 
 Documentos.belongsTo(Usuarios, { onDelete: 'cascade' });

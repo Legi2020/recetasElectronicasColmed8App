@@ -22,11 +22,20 @@ function fileHoverEnd() {
 function addFiles(event) {
     droppedFiles = event.target.files || event.dataTransfer.files;
     if (droppedFiles.length != 0) {
-        if (droppedFiles[0].size > 10000000) {
+        if (droppedFiles[0].size > 20000000) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Tamaño de documento superado',
-                text: 'El documento no debe superar los 10MB',
+                text: 'El documento no debe superar los 20MB',
+            })
+            droppedFiles = '';
+            fileLabelText.innerText = "Seleccione o arrastre un documento aquí";
+            return;
+        } else if (document.getElementById(firmante).value === '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Debe elegir un firmante',
+                text: 'El documento debe tener un firmante',
             })
             droppedFiles = '';
             fileLabelText.innerText = "Seleccione o arrastre un documento aquí";

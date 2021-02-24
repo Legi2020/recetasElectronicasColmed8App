@@ -25,7 +25,7 @@ const registrarDocumento = async(req, res) => {
     if (req.files) {
         const archivo = req.files.imagen;
         let extension = archivo.mimetype.split('/')[1];
-        if ((archivo.mimetype === 'application/pdf') && archivo.size <= 10000000) {
+        if ((archivo.mimetype === 'application/pdf') && archivo.size <= 20000000) {
             // *Calculo del hash del archivo
             const cripto = crypto.createHash('sha256');
             cripto.update(archivo.data);
@@ -49,13 +49,14 @@ const registrarDocumento = async(req, res) => {
             if (bloque != 0) {
                 // Trato el error de que este en la blockchain pero no en la Base de datos
                 try {
-                    const { url } = await Documentos.findOne({ where: { hash: hashDocumento } });
+                    const { url, firmante } = await Documentos.findOne({ where: { hash: hashDocumento } });
                     req.flash('alert-success', 'Documento ya registrado.  Diríjase hacia el final de la página.');
                     respuesta = {
                         mensaje: 'Documento ya registrado.',
                         hash: hashDocumento,
                         timestamp: fechaEncontrado,
                         bloque,
+                        firmante,
                         url: `/documento/imagen/${url}`,
                         existe: true,
                         nombrePagina: 'Registrar documento',
@@ -96,7 +97,7 @@ const registrarDocumento = async(req, res) => {
                 archivo.mv(`${process.env.DIR_IMAGENES}${urlDocumento}`);
 
                 // Registro documento con fecha null, porque no esta en la blockchain todavia.
-                const documentoRegistradoEnBD = await Documentos.create({ hash: hashDocumento, usuarioUsuario: res.locals.usuario.usuario, fecha: null, url: urlDocumento });
+                const documentoRegistradoEnBD = await Documentos.create({ hash: hashDocumento, usuarioUsuario: res.locals.usuario.usuario, fecha: null, firmante: req.body.firmante, url: urlDocumento });
                 // Consulto hasta que el documento se registro
                 let respuestaEncontrado = await encontrarEnBlockchain(hashDocumento);
                 while (parseInt(respuestaEncontrado.bloque) === 0) {
@@ -118,6 +119,7 @@ const registrarDocumento = async(req, res) => {
                     hash: hashDocumento,
                     timestamp: fechaRegistrado,
                     bloque: respuestaEncontrado.bloque,
+                    firmante: req.body.firmante,
                     url: `/documento/imagen/${urlDocumento}`,
                     existe: false,
                     qr: qrCode
@@ -133,7 +135,7 @@ const registrarDocumento = async(req, res) => {
             }
 
         } else {
-            req.flash('alert-danger', 'Solo se admiten archivos .jpg, .png, .pdf, .doc, .docx, .xlsx de máximo 10 MB');
+            req.flash('alert-danger', 'Solo se admiten archivos .pdf de máximo 20 MB');
             res.render('registrar', {
                 mensajes: req.flash(),
                 logueado: true,
@@ -165,8 +167,8 @@ const encontrarDocumento = async(req, res) => {
         });
     }
     const archivo = req.files.imagen;
-    if (!((archivo.mimetype === 'image/jpeg' || archivo.mimetype === 'image/png' || archivo.mimetype === 'application/pdf' || archivo.mimetype === 'application/msword') && archivo.size <= 10000000)) {
-        req.flash('alert-danger', 'Solo se admiten archivos .jpg, .png, .pdf, .doc de máximo 10 MB');
+    if (!((aarchivo.mimetype === 'application/pdf') && archivo.size <= 20000000)) {
+        req.flash('alert-danger', 'Solo se admiten archivos .pdf, 20 MB');
         return res.render('comprobar', {
             mensajes: req.flash(),
             logueado: true,
@@ -199,7 +201,8 @@ const encontrarDocumento = async(req, res) => {
             mensajes: req.flash()
         });
     }
-    try { // Registro documento con fecha null, porque no esta en la blockchain todavia.
+    try {
+
         const documentoBD = await Documentos.findOne({ where: { hash: hashDocumento } });
 
         // Si quedo con fecha null por un error, pero quedo minado
@@ -215,6 +218,7 @@ const encontrarDocumento = async(req, res) => {
             hash: hashDocumento,
             timestamp: fechaDeTimestamp,
             bloque,
+            firmante: documentoBD.firmante,
             url: `/documento/imagen/${documentoBD.url}`,
             existe: true,
             qr: qrCode
@@ -236,15 +240,16 @@ const encontrarDocumento = async(req, res) => {
             bloque,
             url: null,
             existe: true,
-            nombrePagina: 'Registrar documento',
+            nombrePagina: 'Comprobar documento',
             qr: null
         };
+
         return res.render('comprobar', {
             ventana: true,
             respuesta,
             logueado: true,
             btnCerrar: true,
-            nombrePagina: 'Registrar documento',
+            nombrePagina: 'Comprobar documento',
             mensajes: req.flash()
         });
     }
@@ -328,6 +333,7 @@ const comprobarPorUrl = async(req, res) => {
             hash,
             timestamp: fecha,
             bloque,
+            firmante: encontrado.firmante,
             url: `/documento/imagen/${encontrado .url}`,
             existe: true,
             qr: qrCode
