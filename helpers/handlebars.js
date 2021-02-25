@@ -29,7 +29,6 @@ module.exports = {
         return index + 1;
     },
     mostrarFirmante: (firmante) => {
-
         if (firmante === 'presidente') {
             return 'Dr. Eduardo Diaz Mena<br> Presidente<br>'
         } else if (firmante === 'secretaria') {

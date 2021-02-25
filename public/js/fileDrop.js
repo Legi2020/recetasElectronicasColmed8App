@@ -31,15 +31,6 @@ function addFiles(event) {
             droppedFiles = '';
             fileLabelText.innerText = "Seleccione o arrastre un documento aquí";
             return;
-        } else if (document.getElementById(firmante).value === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Debe elegir un firmante',
-                text: 'El documento debe tener un firmante',
-            })
-            droppedFiles = '';
-            fileLabelText.innerText = "Seleccione o arrastre un documento aquí";
-            return;
         }
         if (droppedFiles[0].type !== 'application/pdf') {
             Swal.fire({

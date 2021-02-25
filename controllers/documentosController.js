@@ -21,6 +21,11 @@ const {
 const registrarDocumento = async(req, res) => {
     let hashDocumento;
     let urlDocumento;
+    console.log(req.body.firmante === '');
+    if (req.body.firmante === '') {
+        req.flash('alert-danger', 'Seleccione un firmante');
+        return res.redirect('/registrar');
+    }
     // *Subir archivo
     if (req.files) {
         const archivo = req.files.imagen;
