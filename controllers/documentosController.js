@@ -5,7 +5,7 @@ const Usuarios = require('../models/Usuarios.js');
 const Documentos = require('../models/Documentos.js');
 const QRCode = require('qrcode');
 const pdf = require('html-pdf');
-const merge = require('easy-pdf-merge');
+const merge = require('../node_modules/easy-pdf-merge');
 const fs = require('fs');
 const moment = require('moment');
 
@@ -21,7 +21,7 @@ const {
 const registrarDocumento = async(req, res) => {
     let hashDocumento;
     let urlDocumento;
-    console.log(req.body.firmante === '');
+
     if (req.body.firmante === '') {
         req.flash('alert-danger', 'Seleccione un firmante');
         return res.redirect('/registrar');
@@ -362,13 +362,29 @@ const comprobarPorUrl = async(req, res) => {
 const generarPDF = async(req, res) => {
     const contenido = req.body.contenido.toString();
     const hashOriginal = req.body.hashDocOriginal;
-    let cont = 0;
+    const tamanioHoja = req.body.tamanioHoja;
+    let options;
 
-    if (fs.existsSync(`${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`)) {
-        return res.json({ url: `/generar-pdf/${hashOriginal}` });
+    if (tamanioHoja === 'A3') {
+        options = {
+            "format": "A3",
+            "orientation": "landscape"
+
+        }
+    } else {
+        options = {
+            "format": "Letter",
+            "orientation": "portrait",
+        }
     }
 
-    pdf.create(contenido).toFile(`${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`, function(err, res) {
+    let cont = 0;
+
+    if (fs.existsSync(`${process.env.DIR_DOCUMENTOS_FIRMADOS}${tamanioHoja}${hashOriginal}`)) {
+        return res.json({ url: `/generar-pdf/${tamanioHoja}${hashOriginal}` });
+    }
+
+    pdf.create(contenido, options).toFile(`${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`, function(err, res) {
         if (err) {
             console.log(err);
             return res.status(500).json({ error: 'No se pudo crear el archivo con la información' });
@@ -390,14 +406,15 @@ const generarPDF = async(req, res) => {
         return res.status(500).json({ error: 'No se encontró el con la información' });
     }
 
-    merge([pdfOriginal, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`], `${process.env.DIR_DOCUMENTOS_FIRMADOS}/${hashOriginal}`, function(err) {
+    merge([pdfOriginal, `${process.env.DIR_DOCUMENTOS_INFO}${'info-'+hashOriginal}`], `${process.env.DIR_DOCUMENTOS_FIRMADOS}/${tamanioHoja}${hashOriginal}`, function(err) {
         if (err) {
+            console.log(err);
             return res.status(500).json({ error: 'No se pudo generar el documento firmado' });
         }
     });
 
     cont = 0;
-    while (!fs.existsSync(`${process.env.DIR_DOCUMENTOS_FIRMADOS}${hashOriginal}`) || cont > 10) {
+    while (!fs.existsSync(`${process.env.DIR_DOCUMENTOS_FIRMADOS}${tamanioHoja}${hashOriginal}`) || cont > 10) {
         cont++;
         await sleep(1000);
     }
@@ -410,7 +427,7 @@ const generarPDF = async(req, res) => {
 
     });
 
-    return res.json({ url: `/generar-pdf/${hashOriginal}` });
+    return res.json({ url: `/generar-pdf/${tamanioHoja}${hashOriginal}` });
 
 };
 

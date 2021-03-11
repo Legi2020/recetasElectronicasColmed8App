@@ -10,10 +10,47 @@ const imprimirRespuesta = () => {
     documentoVer.style.display = 'block';
 };
 
-const imprimirPDF = (e) => {
+const imprimirPDF = async(e) => {
     const hashDocOriginal = document.querySelector('#hash-documento').textContent;
     const parrafoDocumento = document.querySelector('#parrafo-info');
     const imagenQR = document.querySelector('#imagen-qr');
+    let tamanioHoja;
+    /* inputOptions can be an object or Promise */
+
+    const inputOptions = new Promise((resolve) => {
+        resolve({
+            '#ff0000': 'A3',
+            '#00ff00': 'A4',
+        })
+    })
+
+    const { value: tamanio } = await Swal.fire({
+        title: 'Seleccione un tamaño de hoja',
+        input: 'radio',
+        showCancelButton: true,
+        confirmButtonText: `Aceptar`,
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#6c757d',
+        confirmButtonColor: '#6c757d',
+        inputOptions: inputOptions,
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Por favor seleccione un tamaño de hoja'
+            }
+        }
+    })
+
+    if (tamanio === undefined) {
+        return;
+    }
+
+    if (tamanio === '#ff0000') {
+        tamanioHoja = 'A3';
+        parrafoDocumento.style.setProperty('margin-left', '400px');
+    } else {
+        tamanioHoja = 'A4';
+    }
+
     if (!parrafoDocumento) {
         return Swal.fire({
             icon: 'error',
@@ -25,20 +62,31 @@ const imprimirPDF = (e) => {
     document.querySelector('#sk-circle-pdf').classList.remove('oculto');
     document.querySelector('#texto-spinner-pdf').classList.remove('oculto');
     parrafoDocumento.style.setProperty('margin-bottom', '0px');
+    imagenQR.style.setProperty('margin-bottom', '0px');
     imagenQR.style.setProperty('width', '80px');
+
+
     const informacion = document.querySelector('#respuesta-info').cloneNode(true);
-    parrafoDocumento.style.setProperty('margin-bottom', '1 rem');
-    imagenQR.style.setProperty('width', '100px');
+
+
+    if (tamanioHoja === 'A3') {
+        parrafoDocumento.style.setProperty('margin-left', '0px');
+    }
+    /* 
+        parrafoDocumento.style.setProperty('margin-bottom', '1 rem');
+        imagenQR.style.setProperty('width', '100px'); */
+
     let contenido = document.createElement('div');
     contenido.style.setProperty('padding', '40px');
     contenido.style.setProperty('font-size', '11px');
     contenido.style.setProperty('text-align', 'justify');
     contenido.style.setProperty('margin-top', '812px');
+    contenido.style.setProperty('margin-bottom', '0px');
     contenido.appendChild(informacion);
     fetch('/generar-pdf', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contenido: contenido.outerHTML, hashDocOriginal: hashDocOriginal + '.pdf' })
+            body: JSON.stringify({ contenido: contenido.outerHTML, hashDocOriginal: hashDocOriginal + '.pdf', tamanioHoja })
         })
         .then(respuesta => respuesta.json())
         .then(resultado => {
