@@ -172,7 +172,7 @@ const encontrarDocumento = async(req, res) => {
         });
     }
     const archivo = req.files.imagen;
-    if (!((aarchivo.mimetype === 'application/pdf') && archivo.size <= 20000000)) {
+    if (!((archivo.mimetype === 'application/pdf') && archivo.size <= 20000000)) {
         req.flash('alert-danger', 'Solo se admiten archivos .pdf, 20 MB');
         return res.render('comprobar', {
             mensajes: req.flash(),
