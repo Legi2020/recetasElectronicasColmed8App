@@ -373,7 +373,7 @@ const generarPDF = async(req, res) => {
         }
     } else {
         options = {
-            "format": "Letter",
+            "format": "A4",
             "orientation": "portrait",
         }
     }
